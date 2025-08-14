@@ -80,7 +80,7 @@ public class PasswordValidatorTests
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)
-            .WithErrorMessage("Password must contain at least one uppercase letter.");
+            .WithErrorMessage("Password must be at least 8 characters, with letters, numbers, and special characters.");
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ public class PasswordValidatorTests
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)
-            .WithErrorMessage("Password must contain at least one lowercase letter.");
+            .WithErrorMessage("Password must be at least 8 characters, with letters, numbers, and special characters.");
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ public class PasswordValidatorTests
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)
-            .WithErrorMessage("Password must contain at least one number.");
+            .WithErrorMessage("Password must be at least 8 characters, with letters, numbers, and special characters.");
     }
 
     /// <summary>
@@ -131,6 +131,6 @@ public class PasswordValidatorTests
 
         // Assert
         result.ShouldHaveValidationErrorFor(x => x)
-            .WithErrorMessage("Password must contain at least one special character.");
+            .WithErrorMessage("Password must be at least 8 characters, with letters, numbers, and special characters.");
     }
 }
