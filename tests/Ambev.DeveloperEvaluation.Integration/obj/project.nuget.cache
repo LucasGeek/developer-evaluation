@@ -1,14 +1,17 @@
 {
   "version": 2,
-  "dgSpecHash": "z6G14bORqlA=",
+  "dgSpecHash": "3x+hOmSF/vE=",
   "success": true,
   "projectFilePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
   "expectedPackageFiles": [
     "/Users/albuquerque/.nuget/packages/automapper/13.0.1/automapper.13.0.1.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/awssdk.core/3.7.100.14/awssdk.core.3.7.100.14.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/awssdk.securitytoken/3.7.100.14/awssdk.securitytoken.3.7.100.14.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/bogus/35.6.1/bogus.35.6.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/castle.core/5.1.1/castle.core.5.1.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/coverlet.collector/6.0.2/coverlet.collector.6.0.2.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/dnsclient/1.6.1/dnsclient.1.6.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/fluentassertions/6.12.1/fluentassertions.6.12.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/fluentvalidation/11.10.0/fluentvalidation.11.10.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
@@ -31,6 +34,7 @@
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.caching.abstractions/8.0.0/microsoft.extensions.caching.abstractions.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.caching.memory/8.0.1/microsoft.extensions.caching.memory.8.0.1.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/microsoft.extensions.caching.stackexchangeredis/8.0.10/microsoft.extensions.caching.stackexchangeredis.8.0.10.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.configuration/8.0.0/microsoft.extensions.configuration.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.configuration.abstractions/8.0.0/microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.configuration.binder/8.0.2/microsoft.extensions.configuration.binder.8.0.2.nupkg.sha512",
@@ -68,15 +72,27 @@
     "/Users/albuquerque/.nuget/packages/microsoft.identitymodel.protocols.openidconnect/7.1.2/microsoft.identitymodel.protocols.openidconnect.7.1.2.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.identitymodel.tokens/7.1.2/microsoft.identitymodel.tokens.7.1.2.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.net.test.sdk/17.11.1/microsoft.net.test.sdk.17.11.1.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/microsoft.netcore.platforms/5.0.0/microsoft.netcore.platforms.5.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.openapi/1.6.14/microsoft.openapi.1.6.14.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.testplatform.objectmodel/17.11.1/microsoft.testplatform.objectmodel.17.11.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.testplatform.testhost/17.11.1/microsoft.testplatform.testhost.17.11.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.visualstudio.azure.containers.tools.targets/1.20.1/microsoft.visualstudio.azure.containers.tools.targets.1.20.1.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/microsoft.win32.registry/5.0.0/microsoft.win32.registry.5.0.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/mongodb.bson/2.28.0/mongodb.bson.2.28.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/mongodb.driver/2.28.0/mongodb.driver.2.28.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/mongodb.driver.core/2.28.0/mongodb.driver.core.2.28.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/mongodb.driver.core.extensions.diagnosticsources/1.1.0/mongodb.driver.core.extensions.diagnosticsources.1.1.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/mongodb.extensions.context/1.4.0/mongodb.extensions.context.1.4.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/mongodb.libmongocrypt/1.11.0/mongodb.libmongocrypt.1.11.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/npgsql/8.0.4/npgsql.8.0.4.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/npgsql.entityframeworkcore.postgresql/8.0.8/npgsql.entityframeworkcore.postgresql.8.0.8.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/nsubstitute/5.1.0/nsubstitute.5.1.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/oneof/3.0.271/oneof.3.0.271.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/pipelines.sockets.unofficial/2.2.8/pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/rebus/8.5.0/rebus.8.5.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/rebus.postgresql/9.1.0/rebus.postgresql.9.1.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/rebus.serviceprovider/8.0.0/rebus.serviceprovider.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/roslynator.core/4.12.4/roslynator.core.4.12.4.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/roslynator.testing.common/4.12.4/roslynator.testing.common.4.12.4.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/roslynator.testing.csharp/4.12.4/roslynator.testing.csharp.4.12.4.nupkg.sha512",
@@ -95,10 +111,14 @@
     "/Users/albuquerque/.nuget/packages/serilog.sinks.console/6.0.0/serilog.sinks.console.6.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/serilog.sinks.debug/2.0.0/serilog.sinks.debug.2.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/serilog.sinks.file/5.0.0/serilog.sinks.file.5.0.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/sharpcompress/0.30.1/sharpcompress.0.30.1.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/snappier/1.0.0/snappier.1.0.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/stackexchange.redis/2.8.16/stackexchange.redis.2.8.16.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/swashbuckle.aspnetcore/6.8.1/swashbuckle.aspnetcore.6.8.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/swashbuckle.aspnetcore.swagger/6.8.1/swashbuckle.aspnetcore.swagger.6.8.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.8.1/swashbuckle.aspnetcore.swaggergen.6.8.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.8.1/swashbuckle.aspnetcore.swaggerui.6.8.1.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/system.buffers/4.5.1/system.buffers.4.5.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.collections.immutable/8.0.0/system.collections.immutable.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.composition/8.0.0/system.composition.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.composition.attributedmodel/8.0.0/system.composition.attributedmodel.8.0.0.nupkg.sha512",
@@ -107,13 +127,17 @@
     "/Users/albuquerque/.nuget/packages/system.composition.runtime/8.0.0/system.composition.runtime.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.composition.typedparts/8.0.0/system.composition.typedparts.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.configuration.configurationmanager/4.4.0/system.configuration.configurationmanager.4.4.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/system.diagnostics.diagnosticsource/5.0.0/system.diagnostics.diagnosticsource.5.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.diagnostics.eventlog/8.0.1/system.diagnostics.eventlog.8.0.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.identitymodel.tokens.jwt/7.1.2/system.identitymodel.tokens.jwt.7.1.2.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.io.pipelines/8.0.0/system.io.pipelines.8.0.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/system.memory/4.5.5/system.memory.4.5.5.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.reflection.metadata/8.0.0/system.reflection.metadata.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.reflection.typeextensions/4.7.0/system.reflection.typeextensions.4.7.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/system.security.accesscontrol/5.0.0/system.security.accesscontrol.5.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.security.cryptography.protecteddata/4.4.0/system.security.cryptography.protecteddata.4.4.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/system.security.principal.windows/5.0.0/system.security.principal.windows.5.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.threading.channels/8.0.0/system.threading.channels.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/xunit/2.9.2/xunit.2.9.2.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/xunit.abstractions/2.0.3/xunit.abstractions.2.0.3.nupkg.sha512",
@@ -122,7 +146,57 @@
     "/Users/albuquerque/.nuget/packages/xunit.core/2.9.2/xunit.core.2.9.2.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/xunit.extensibility.core/2.9.2/xunit.extensibility.core.2.9.2.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/xunit.extensibility.execution/2.9.2/xunit.extensibility.execution.2.9.2.nupkg.sha512",
-    "/Users/albuquerque/.nuget/packages/xunit.runner.visualstudio/2.8.2/xunit.runner.visualstudio.2.8.2.nupkg.sha512"
+    "/Users/albuquerque/.nuget/packages/xunit.runner.visualstudio/2.8.2/xunit.runner.visualstudio.2.8.2.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/zstdsharp.port/0.7.3/zstdsharp.port.0.7.3.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "Ambev.DeveloperEvaluation.ORM depends on MongoDB.Extensions.Context (>= 1.3.1) but MongoDB.Extensions.Context 1.3.1 was not found. MongoDB.Extensions.Context 1.4.0 was resolved instead.",
+      "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
+      "warningLevel": 1,
+      "filePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
+      "libraryId": "MongoDB.Extensions.Context",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "Ambev.DeveloperEvaluation.ORM depends on Rebus (>= 8.4.5) but Rebus 8.4.5 was not found. Rebus 8.5.0 was resolved instead.",
+      "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
+      "warningLevel": 1,
+      "filePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
+      "libraryId": "Rebus",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1608",
+      "level": "Warning",
+      "message": "Detected package version outside of dependency constraint: Rebus.ServiceProvider 8.0.0 requires Microsoft.Extensions.DependencyInjection (>= 3.0.0 && < 7.0.0) but version Microsoft.Extensions.DependencyInjection 8.0.1 was resolved.",
+      "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
+      "warningLevel": 1,
+      "filePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
+      "libraryId": "Microsoft.Extensions.DependencyInjection",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1608",
+      "level": "Warning",
+      "message": "Detected package version outside of dependency constraint: Rebus.ServiceProvider 8.0.0 requires Microsoft.Extensions.Hosting.Abstractions (>= 3.0.0 && < 7.0.0) but version Microsoft.Extensions.Hosting.Abstractions 8.0.1 was resolved.",
+      "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
+      "warningLevel": 1,
+      "filePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
+      "libraryId": "Microsoft.Extensions.Hosting.Abstractions",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }
