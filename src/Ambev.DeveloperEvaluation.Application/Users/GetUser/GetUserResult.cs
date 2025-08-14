@@ -18,6 +18,11 @@ public class GetUserResult
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
+    /// The user's username
+    /// </summary>
+    public string Username { get; set; } = string.Empty;
+
+    /// <summary>
     /// The user's email address
     /// </summary>
     public string Email { get; set; } = string.Empty;
