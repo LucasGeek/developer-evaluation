@@ -66,6 +66,16 @@ public class Sale : BaseEntity
         }
     }
 
+    public void RemoveItemById(Guid itemId)
+    {
+        var item = Items.FirstOrDefault(i => i.Id == itemId);
+        if (item != null)
+        {
+            Items.Remove(item);
+            RecalculateTotal();
+        }
+    }
+
     public void Cancel()
     {
         Cancelled = true;
@@ -82,5 +92,19 @@ public class Sale : BaseEntity
     public void SetSaleNumber(string saleNumber)
     {
         SaleNumber = saleNumber;
+    }
+
+    public void UpdateSaleDetails(DateTime date, string customerDescription, string branchDescription)
+    {
+        Date = date;
+        CustomerDescription = customerDescription;
+        BranchDescription = branchDescription;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void ClearItems()
+    {
+        Items.Clear();
+        UpdatedAt = DateTime.UtcNow;
     }
 }

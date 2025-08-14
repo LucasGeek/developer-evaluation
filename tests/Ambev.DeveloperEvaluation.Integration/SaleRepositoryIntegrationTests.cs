@@ -131,11 +131,9 @@ public class SaleRepositoryIntegrationTests : IDisposable
         var result = await _repository.ListAsync(1, 5, "salenumber");
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().HaveCount(5);
+        result.Sales.Should().NotBeNull();
+        result.Sales.Should().HaveCount(5);
         result.TotalCount.Should().Be(10);
-        result.Page.Should().Be(1);
-        result.Size.Should().Be(5);
     }
 
     [Fact(DisplayName = "ListAsync should filter by branch")]
@@ -167,9 +165,9 @@ public class SaleRepositoryIntegrationTests : IDisposable
         var result = await _repository.ListAsync(1, 10, "salenumber", branchId: branchId1);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().HaveCount(3);
-        result.Should().OnlyContain(s => s.BranchId == branchId1);
+        result.Sales.Should().NotBeNull();
+        result.Sales.Should().HaveCount(3);
+        result.Sales.Should().OnlyContain(s => s.BranchId == branchId1);
     }
 
     public void Dispose()

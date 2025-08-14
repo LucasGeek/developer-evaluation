@@ -1,10 +1,16 @@
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
+using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ListSales;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSaleItem;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -115,5 +121,159 @@ public class SalesController : BaseController
             Message = "Sales list retrieved successfully",
             Data = response
         });
+    }
+
+    /// <summary>
+    /// Updates an existing sale
+    /// </summary>
+    /// <param name="id">The unique identifier of the sale to update</param>
+    /// <param name="request">The sale update request</param>
+    /// <returns>The updated sale details</returns>
+    /// <response code="200">Sale updated successfully</response>
+    /// <response code="400">Invalid sale data or business rule violation</response>
+    /// <response code="404">Sale not found</response>
+    /// <response code="401">Unauthorized</response>
+    /// <response code="403">Forbidden - insufficient permissions</response>
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Manager,Admin")]
+    [ProducesResponseType(typeof(ApiResponseWithData<UpdateSaleResponse>), 200)]
+    [ProducesResponseType(typeof(ApiResponse), 400)]
+    [ProducesResponseType(typeof(ApiResponse), 404)]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSaleRequest request)
+    {
+        try
+        {
+            var command = _mapper.Map<UpdateSaleCommand>(request);
+            command.Id = id;
+            
+            var result = await _mediator.Send(command);
+            var response = _mapper.Map<UpdateSaleResponse>(result);
+            
+            return Ok(new ApiResponseWithData<UpdateSaleResponse>
+            {
+                Success = true,
+                Message = "Sale updated successfully",
+                Data = response
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            if (ex.Message.Contains("not found"))
+            {
+                return NotFound(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+            
+            return BadRequest(new ApiResponse
+            {
+                Success = false,
+                Message = ex.Message
+            });
+        }
+    }
+
+    /// <summary>
+    /// Cancels an existing sale
+    /// </summary>
+    /// <param name="id">The unique identifier of the sale to cancel</param>
+    /// <returns>The cancelled sale details</returns>
+    /// <response code="200">Sale cancelled successfully</response>
+    /// <response code="404">Sale not found</response>
+    /// <response code="401">Unauthorized</response>
+    /// <response code="403">Forbidden - insufficient permissions</response>
+    [HttpPut("{id:guid}/cancel")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(typeof(ApiResponseWithData<CancelSaleResponse>), 200)]
+    [ProducesResponseType(typeof(ApiResponse), 404)]
+    public async Task<IActionResult> Cancel(Guid id)
+    {
+        try
+        {
+            var command = new CancelSaleCommand { Id = id };
+            var result = await _mediator.Send(command);
+            var response = _mapper.Map<CancelSaleResponse>(result);
+            
+            return Ok(new ApiResponseWithData<CancelSaleResponse>
+            {
+                Success = true,
+                Message = result.Message,
+                Data = response
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            if (ex.Message.Contains("not found"))
+            {
+                return NotFound(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+            
+            return BadRequest(new ApiResponse
+            {
+                Success = false,
+                Message = ex.Message
+            });
+        }
+    }
+
+    /// <summary>
+    /// Cancels/removes a specific item from a sale
+    /// </summary>
+    /// <param name="id">The unique identifier of the sale</param>
+    /// <param name="itemId">The unique identifier of the item to cancel</param>
+    /// <returns>The result of the item cancellation</returns>
+    /// <response code="200">Item cancelled successfully</response>
+    /// <response code="400">Invalid request or business rule violation</response>
+    /// <response code="404">Sale or item not found</response>
+    /// <response code="401">Unauthorized</response>
+    /// <response code="403">Forbidden - insufficient permissions</response>
+    [HttpDelete("{id:guid}/items/{itemId:guid}")]
+    [Authorize(Roles = "Manager,Admin")]
+    [ProducesResponseType(typeof(ApiResponseWithData<CancelSaleItemResponse>), 200)]
+    [ProducesResponseType(typeof(ApiResponse), 400)]
+    [ProducesResponseType(typeof(ApiResponse), 404)]
+    public async Task<IActionResult> CancelItem(Guid id, Guid itemId)
+    {
+        try
+        {
+            var command = new CancelSaleItemCommand
+            {
+                SaleId = id,
+                ItemId = itemId
+            };
+            
+            var result = await _mediator.Send(command);
+            var response = _mapper.Map<CancelSaleItemResponse>(result);
+            
+            return Ok(new ApiResponseWithData<CancelSaleItemResponse>
+            {
+                Success = true,
+                Message = result.Message,
+                Data = response
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            if (ex.Message.Contains("not found"))
+            {
+                return NotFound(new ApiResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+            
+            return BadRequest(new ApiResponse
+            {
+                Success = false,
+                Message = ex.Message
+            });
+        }
     }
 }

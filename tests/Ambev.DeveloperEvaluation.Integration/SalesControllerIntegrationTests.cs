@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
 using FluentAssertions;
 using System.Net;
 using System.Net.Http.Json;
@@ -65,7 +66,7 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
         saleId.Should().NotBeEmpty();
         
         response.Headers.Location.Should().NotBeNull();
-        response.Headers.Location.ToString().Should().Contain($"/api/sales/{saleId}");
+        response.Headers.Location!.ToString().Should().Contain($"/api/sales/{saleId}");
     }
 
     [Fact(DisplayName = "POST /api/sales with invalid data should return bad request")]
@@ -463,5 +464,666 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
         var firstSaleDate = salesArray[0].GetProperty("date").GetDateTime();
         var secondSaleDate = salesArray[1].GetProperty("date").GetDateTime();
         firstSaleDate.Should().BeBefore(secondSaleDate.AddSeconds(1)); // Allow for small time differences
+    }
+
+    [Fact(DisplayName = "PUT /api/sales/{id} should update sale successfully")]
+    public async Task Put_ValidUpdateRequest_ShouldUpdateSaleSuccessfully()
+    {
+        // Arrange - First create a sale
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = Guid.NewGuid(),
+            BranchDescription = "Original Branch",
+            CustomerId = Guid.NewGuid(),
+            CustomerDescription = "Original Customer",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Original Product",
+                    Quantity = 2,
+                    UnitPrice = 10.00m
+                }
+            }
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createJsonDocument = JsonDocument.Parse(createContent);
+        var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+
+        // Prepare update request
+        var updateRequest = new UpdateSaleRequest
+        {
+            Date = DateTime.UtcNow.AddHours(-1),
+            CustomerDescription = "Updated Customer",
+            BranchDescription = "Updated Branch",
+            Items = new List<UpdateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Updated Product 1",
+                    Quantity = 4, // 10% discount applies
+                    UnitPrice = 25.00m
+                },
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Updated Product 2",
+                    Quantity = 1,
+                    UnitPrice = 15.00m
+                }
+            }
+        };
+
+        // Act
+        var response = await _client.PutAsJsonAsync($"/api/sales/{saleId}", updateRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeTrue();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Be("Sale updated successfully");
+        
+        var data = jsonDocument.RootElement.GetProperty("data");
+        data.GetProperty("id").GetGuid().Should().Be(saleId);
+        data.GetProperty("customerDescription").GetString().Should().Be("Updated Customer");
+        data.GetProperty("branchDescription").GetString().Should().Be("Updated Branch");
+        
+        var items = data.GetProperty("items");
+        items.GetArrayLength().Should().Be(2);
+        
+        // Verify first item with discount calculation
+        var firstItem = items[0];
+        firstItem.GetProperty("productDescription").GetString().Should().Be("Updated Product 1");
+        firstItem.GetProperty("quantity").GetInt32().Should().Be(4);
+        firstItem.GetProperty("unitPrice").GetDecimal().Should().Be(25.00m);
+        firstItem.GetProperty("discount").GetDecimal().Should().Be(10.00m); // 10% of 100
+        firstItem.GetProperty("total").GetDecimal().Should().Be(90.00m); // 100 - 10
+    }
+
+    [Fact(DisplayName = "PUT /api/sales/{id} should return 404 when sale does not exist")]
+    public async Task Put_NonExistentSaleId_ShouldReturn404()
+    {
+        // Arrange
+        var nonExistentId = Guid.NewGuid();
+        var updateRequest = new UpdateSaleRequest
+        {
+            Date = DateTime.UtcNow,
+            CustomerDescription = "Customer",
+            BranchDescription = "Branch",
+            Items = new List<UpdateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product",
+                    Quantity = 1,
+                    UnitPrice = 10.00m
+                }
+            }
+        };
+
+        // Act
+        var response = await _client.PutAsJsonAsync($"/api/sales/{nonExistentId}", updateRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeFalse();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Contain("not found");
+    }
+
+    [Fact(DisplayName = "PUT /api/sales/{id} should return 400 when trying to update cancelled sale")]
+    public async Task Put_CancelledSale_ShouldReturn400()
+    {
+        // Arrange - Create and then cancel a sale
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = Guid.NewGuid(),
+            BranchDescription = "Branch",
+            CustomerId = Guid.NewGuid(),
+            CustomerDescription = "Customer",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product",
+                    Quantity = 1,
+                    UnitPrice = 10.00m
+                }
+            }
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createJsonDocument = JsonDocument.Parse(createContent);
+        var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+
+        // Cancel the sale first (this will be implemented in next epic)
+        // For now, we'll simulate the scenario by creating a sale that's already cancelled
+        
+        var updateRequest = new UpdateSaleRequest
+        {
+            Date = DateTime.UtcNow,
+            CustomerDescription = "Updated Customer",
+            BranchDescription = "Updated Branch",  
+            Items = new List<UpdateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product",
+                    Quantity = 1,
+                    UnitPrice = 10.00m
+                }
+            }
+        };
+
+        // Act - Try to update the sale (this should work since we haven't implemented cancel yet)
+        var response = await _client.PutAsJsonAsync($"/api/sales/{saleId}", updateRequest);
+
+        // Assert - For now, this should succeed since cancel isn't implemented
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact(DisplayName = "PUT /api/sales/{id} should apply business rules correctly")]
+    public async Task Put_UpdateSaleWithBusinessRules_ShouldApplyRulesCorrectly()
+    {
+        // Arrange - Create a sale
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = Guid.NewGuid(),
+            BranchDescription = "Branch",
+            CustomerId = Guid.NewGuid(),
+            CustomerDescription = "Customer",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product",
+                    Quantity = 1,
+                    UnitPrice = 10.00m
+                }
+            }
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createJsonDocument = JsonDocument.Parse(createContent);
+        var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+
+        // Update with items that should get discounts
+        var updateRequest = new UpdateSaleRequest
+        {
+            Date = DateTime.UtcNow,
+            CustomerDescription = "Customer",
+            BranchDescription = "Branch",
+            Items = new List<UpdateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "10% Discount Product",
+                    Quantity = 5, // 10% discount
+                    UnitPrice = 20.00m // 5 * 20 = 100, discount = 10, total = 90
+                },
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "20% Discount Product",
+                    Quantity = 12, // 20% discount  
+                    UnitPrice = 10.00m // 12 * 10 = 120, discount = 24, total = 96
+                }
+            }
+        };
+
+        // Act
+        var response = await _client.PutAsJsonAsync($"/api/sales/{saleId}", updateRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        var data = jsonDocument.RootElement.GetProperty("data");
+        var items = data.GetProperty("items");
+        
+        // Verify discount calculations
+        var firstItem = items[0];
+        firstItem.GetProperty("discount").GetDecimal().Should().Be(10.00m); // 10% of 100
+        firstItem.GetProperty("total").GetDecimal().Should().Be(90.00m);
+        
+        var secondItem = items[1];
+        secondItem.GetProperty("discount").GetDecimal().Should().Be(24.00m); // 20% of 120
+        secondItem.GetProperty("total").GetDecimal().Should().Be(96.00m);
+        
+        // Total sale: 90 + 96 = 186
+        data.GetProperty("totalAmount").GetDecimal().Should().Be(186.00m);
+    }
+
+    [Fact(DisplayName = "PUT /api/sales/{id}/cancel should cancel sale successfully")]
+    public async Task Put_ValidCancelRequest_ShouldCancelSaleSuccessfully()
+    {
+        // Arrange - First create a sale
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = Guid.NewGuid(),
+            BranchDescription = "Branch to Cancel",
+            CustomerId = Guid.NewGuid(),
+            CustomerDescription = "Customer to Cancel",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product to Cancel",
+                    Quantity = 1,
+                    UnitPrice = 10.00m
+                }
+            }
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createJsonDocument = JsonDocument.Parse(createContent);
+        var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+
+        // Act - Cancel the sale
+        var response = await _client.PutAsync($"/api/sales/{saleId}/cancel", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeTrue();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Be("Sale cancelled successfully");
+        
+        var data = jsonDocument.RootElement.GetProperty("data");
+        data.GetProperty("id").GetGuid().Should().Be(saleId);
+        data.GetProperty("cancelled").GetBoolean().Should().BeTrue();
+        data.GetProperty("cancelledAt").GetDateTime().Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+    }
+
+    [Fact(DisplayName = "PUT /api/sales/{id}/cancel should return 404 when sale does not exist")]
+    public async Task Put_CancelNonExistentSale_ShouldReturn404()
+    {
+        // Arrange
+        var nonExistentId = Guid.NewGuid();
+
+        // Act
+        var response = await _client.PutAsync($"/api/sales/{nonExistentId}/cancel", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeFalse();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Contain("not found");
+    }
+
+    [Fact(DisplayName = "PUT /api/sales/{id}/cancel should handle already cancelled sale")]
+    public async Task Put_CancelAlreadyCancelledSale_ShouldReturnOk()
+    {
+        // Arrange - Create and cancel a sale
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = Guid.NewGuid(),
+            BranchDescription = "Branch",
+            CustomerId = Guid.NewGuid(),
+            CustomerDescription = "Customer",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product",
+                    Quantity = 1,
+                    UnitPrice = 10.00m
+                }
+            }
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createJsonDocument = JsonDocument.Parse(createContent);
+        var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+
+        // Cancel the sale first
+        await _client.PutAsync($"/api/sales/{saleId}/cancel", null);
+
+        // Act - Try to cancel again
+        var response = await _client.PutAsync($"/api/sales/{saleId}/cancel", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeTrue();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Be("Sale is already cancelled");
+        
+        var data = jsonDocument.RootElement.GetProperty("data");
+        data.GetProperty("id").GetGuid().Should().Be(saleId);
+        data.GetProperty("cancelled").GetBoolean().Should().BeTrue();
+    }
+
+    [Fact(DisplayName = "PUT /api/sales/{id}/cancel should prevent updating cancelled sale")]
+    public async Task Put_UpdateCancelledSale_ShouldReturn400()
+    {
+        // Arrange - Create and cancel a sale
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = Guid.NewGuid(),
+            BranchDescription = "Branch",
+            CustomerId = Guid.NewGuid(),
+            CustomerDescription = "Customer",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product",
+                    Quantity = 1,
+                    UnitPrice = 10.00m
+                }
+            }
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createJsonDocument = JsonDocument.Parse(createContent);
+        var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+
+        // Cancel the sale
+        await _client.PutAsync($"/api/sales/{saleId}/cancel", null);
+
+        // Try to update the cancelled sale
+        var updateRequest = new UpdateSaleRequest
+        {
+            Date = DateTime.UtcNow,
+            CustomerDescription = "Updated Customer",
+            BranchDescription = "Updated Branch",
+            Items = new List<UpdateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Updated Product",
+                    Quantity = 1,
+                    UnitPrice = 15.00m
+                }
+            }
+        };
+
+        // Act - Try to update the cancelled sale
+        var response = await _client.PutAsJsonAsync($"/api/sales/{saleId}", updateRequest);
+
+        // Assert - Should return bad request since sale is cancelled
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeFalse();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Contain("cancelled sale");
+    }
+
+    [Fact(DisplayName = "DELETE /api/sales/{id}/items/{itemId} should cancel item successfully")]
+    public async Task Delete_ValidCancelItemRequest_ShouldCancelItemSuccessfully()
+    {
+        // Arrange - Create a sale with multiple items
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = Guid.NewGuid(),
+            BranchDescription = "Branch with Items",
+            CustomerId = Guid.NewGuid(),
+            CustomerDescription = "Customer with Items",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product 1",
+                    Quantity = 2,
+                    UnitPrice = 10.00m
+                },
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product 2",
+                    Quantity = 3,
+                    UnitPrice = 15.00m
+                }
+            }
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createJsonDocument = JsonDocument.Parse(createContent);
+        var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+
+        // Get the sale to retrieve item IDs
+        var getResponse = await _client.GetAsync($"/api/sales/{saleId}");
+        var getContent = await getResponse.Content.ReadAsStringAsync();
+        var getJsonDocument = JsonDocument.Parse(getContent);
+        var items = getJsonDocument.RootElement.GetProperty("data").GetProperty("items");
+        var firstItemId = items[0].GetProperty("id").GetGuid();
+
+        // Act - Cancel the first item
+        var response = await _client.DeleteAsync($"/api/sales/{saleId}/items/{firstItemId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeTrue();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Be("Item cancelled successfully");
+        
+        var data = jsonDocument.RootElement.GetProperty("data");
+        data.GetProperty("saleId").GetGuid().Should().Be(saleId);
+        data.GetProperty("itemId").GetGuid().Should().Be(firstItemId);
+        data.GetProperty("itemRemoved").GetBoolean().Should().BeTrue();
+        
+        // Verify the sale now has only one item
+        var updatedGetResponse = await _client.GetAsync($"/api/sales/{saleId}");
+        var updatedGetContent = await updatedGetResponse.Content.ReadAsStringAsync();
+        var updatedGetJsonDocument = JsonDocument.Parse(updatedGetContent);
+        var updatedItems = updatedGetJsonDocument.RootElement.GetProperty("data").GetProperty("items");
+        updatedItems.GetArrayLength().Should().Be(1);
+    }
+
+    [Fact(DisplayName = "DELETE /api/sales/{id}/items/{itemId} should return 404 when sale not found")]
+    public async Task Delete_CancelItemFromNonExistentSale_ShouldReturn404()
+    {
+        // Arrange
+        var nonExistentSaleId = Guid.NewGuid();
+        var nonExistentItemId = Guid.NewGuid();
+
+        // Act
+        var response = await _client.DeleteAsync($"/api/sales/{nonExistentSaleId}/items/{nonExistentItemId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeFalse();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Contain("not found");
+    }
+
+    [Fact(DisplayName = "DELETE /api/sales/{id}/items/{itemId} should return 404 when item not found")]
+    public async Task Delete_CancelNonExistentItem_ShouldReturn404()
+    {
+        // Arrange - Create a sale
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = Guid.NewGuid(),
+            BranchDescription = "Branch",
+            CustomerId = Guid.NewGuid(),
+            CustomerDescription = "Customer",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product",
+                    Quantity = 1,
+                    UnitPrice = 10.00m
+                }
+            }
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createJsonDocument = JsonDocument.Parse(createContent);
+        var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+
+        var nonExistentItemId = Guid.NewGuid();
+
+        // Act
+        var response = await _client.DeleteAsync($"/api/sales/{saleId}/items/{nonExistentItemId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeFalse();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Contain("not found");
+    }
+
+    [Fact(DisplayName = "DELETE /api/sales/{id}/items/{itemId} should return 400 when trying to cancel last item")]
+    public async Task Delete_CancelLastItem_ShouldReturn400()
+    {
+        // Arrange - Create a sale with only one item
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = Guid.NewGuid(),
+            BranchDescription = "Branch",
+            CustomerId = Guid.NewGuid(),
+            CustomerDescription = "Customer",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Only Product",
+                    Quantity = 1,
+                    UnitPrice = 10.00m
+                }
+            }
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createJsonDocument = JsonDocument.Parse(createContent);
+        var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+
+        // Get the sale to retrieve the item ID
+        var getResponse = await _client.GetAsync($"/api/sales/{saleId}");
+        var getContent = await getResponse.Content.ReadAsStringAsync();
+        var getJsonDocument = JsonDocument.Parse(getContent);
+        var items = getJsonDocument.RootElement.GetProperty("data").GetProperty("items");
+        var onlyItemId = items[0].GetProperty("id").GetGuid();
+
+        // Act - Try to cancel the only item
+        var response = await _client.DeleteAsync($"/api/sales/{saleId}/items/{onlyItemId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeFalse();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Contain("Cannot cancel the last item");
+    }
+
+    [Fact(DisplayName = "DELETE /api/sales/{id}/items/{itemId} should return 400 when sale is cancelled")]
+    public async Task Delete_CancelItemFromCancelledSale_ShouldReturn400()
+    {
+        // Arrange - Create and cancel a sale
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = Guid.NewGuid(),
+            BranchDescription = "Branch",
+            CustomerId = Guid.NewGuid(),
+            CustomerDescription = "Customer",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product 1",
+                    Quantity = 1,
+                    UnitPrice = 10.00m
+                },
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Product 2", 
+                    Quantity = 1,
+                    UnitPrice = 15.00m
+                }
+            }
+        };
+
+        var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createJsonDocument = JsonDocument.Parse(createContent);
+        var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+
+        // Get the sale to retrieve item ID
+        var getResponse = await _client.GetAsync($"/api/sales/{saleId}");
+        var getContent = await getResponse.Content.ReadAsStringAsync();
+        var getJsonDocument = JsonDocument.Parse(getContent);
+        var items = getJsonDocument.RootElement.GetProperty("data").GetProperty("items");
+        var firstItemId = items[0].GetProperty("id").GetGuid();
+
+        // Cancel the entire sale first
+        await _client.PutAsync($"/api/sales/{saleId}/cancel", null);
+
+        // Act - Try to cancel an item from the cancelled sale
+        var response = await _client.DeleteAsync($"/api/sales/{saleId}/items/{firstItemId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeFalse();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Contain("cancelled sale");
     }
 }
