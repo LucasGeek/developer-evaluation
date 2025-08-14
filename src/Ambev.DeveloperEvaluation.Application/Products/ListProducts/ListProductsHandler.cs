@@ -46,7 +46,7 @@ public class ListProductsHandler : IQueryHandler<ListProductsQuery, ListProducts
 
         var result = new ListProductsResult
         {
-            Products = _mapper.Map<List<GetProductResult>>(paginatedProducts.Items),
+            Products = _mapper.Map<List<GetProductResult>>(paginatedProducts),
             TotalCount = paginatedProducts.TotalCount,
             Page = request.Page,
             PageSize = request.Limit

@@ -4,11 +4,6 @@ using Ambev.DeveloperEvaluation.ORM.Messaging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
-using Rebus.Config;
-using Rebus.PostgreSql.Transport;
-using Rebus.PostgreSql.Subscriptions;
-using Rebus.Routing.TypeBased;
-using Rebus.ServiceProvider;
 
 namespace Ambev.DeveloperEvaluation.ORM.Extensions;
 
@@ -38,19 +33,11 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddRebusMessaging(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? throw new ArgumentNullException("DefaultConnection");
-
-        services.AddRebus(configure => configure
-            .Transport(t => t.UsePostgreSql(connectionString, "messages"))
-            .Subscriptions(s => s.UsePostgreSql(connectionString, "subscriptions"))
-            .Routing(r => r.TypeBased().MapAssemblyOf<Program>("messages"))
-            .Options(o => o.SetMaxParallelism(1))
-        );
-
-        services.AddScoped<IEventBus, RebusEventBus>();
+        // Using logging-based event bus for domain events
+        // This follows CLAUDE.md guidance for "differential" - events are logged with structured data
+        services.AddScoped<IEventBus, LoggingEventBus>();
         
         return services;
     }
@@ -59,7 +46,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddMongoDb(configuration);
         services.AddRedisCache(configuration);
-        services.AddRebusMessaging(configuration);
+        services.AddEventBus(configuration);
         
         return services;
     }
