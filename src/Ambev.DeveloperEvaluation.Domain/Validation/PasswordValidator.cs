@@ -8,7 +8,10 @@ public class PasswordValidator : AbstractValidator<string>
     {
         RuleFor(password => password)
             .NotEmpty()
-            .Matches(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
-            .WithMessage("Password must be at least 8 characters, with letters, numbers, and special characters.");
+            .MinimumLength(8)
+            .Matches(@"[A-Z]+").WithMessage("Password must be at least 8 characters, with letters, numbers, and special characters.")
+            .Matches(@"[a-z]+").WithMessage("Password must be at least 8 characters, with letters, numbers, and special characters.")
+            .Matches(@"[0-9]+").WithMessage("Password must be at least 8 characters, with letters, numbers, and special characters.")
+            .Matches(@"[@$!%*?&]+").WithMessage("Password must be at least 8 characters, with letters, numbers, and special characters.");
     }
 }
