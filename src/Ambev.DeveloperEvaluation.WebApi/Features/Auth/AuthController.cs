@@ -31,14 +31,14 @@ public class AuthController : BaseController
     /// <summary>
     /// Authenticates a user with their credentials
     /// </summary>
-    /// <param name="request">The authentication request</param>
+    /// <param name="request">The login request</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Authentication token if successful</returns>
-    [HttpPost]
+    [HttpPost("login")]
     [ProducesResponseType(typeof(ApiResponseWithData<AuthenticateUserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> AuthenticateUser([FromBody] AuthenticateUserRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Login([FromBody] AuthenticateUserRequest request, CancellationToken cancellationToken)
     {
         var validator = new AuthenticateUserRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
