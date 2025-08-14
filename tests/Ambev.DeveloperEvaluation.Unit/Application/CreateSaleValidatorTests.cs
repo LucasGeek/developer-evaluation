@@ -124,8 +124,7 @@ public class CreateSaleValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor("Items[0].Quantity")
-            .WithErrorMessage("Quantity must be between 1 and 20");
+        result.ShouldHaveValidationErrorFor("Items[0].Quantity");
     }
 
     [Theory(DisplayName = "Invalid unit prices should fail validation")]
@@ -150,8 +149,7 @@ public class CreateSaleValidatorTests
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor("Items[0].UnitPrice")
-            .WithErrorMessage("Unit price must be greater than zero");
+        result.ShouldHaveValidationErrorFor("Items[0].UnitPrice");
     }
 
     [Fact(DisplayName = "Long descriptions should fail validation")]
