@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "TNQhSE/oT2A=",
+  "dgSpecHash": "ct2CssnLs3g=",
   "success": true,
   "projectFilePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Common/Ambev.DeveloperEvaluation.Common.csproj",
   "expectedPackageFiles": [
@@ -52,9 +52,7 @@
     "/Users/albuquerque/.nuget/packages/system.diagnostics.diagnosticsource/6.0.0/system.diagnostics.diagnosticsource.6.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.identitymodel.tokens.jwt/7.1.2/system.identitymodel.tokens.jwt.7.1.2.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/system.reflection.typeextensions/4.7.0/system.reflection.typeextensions.4.7.0.nupkg.sha512",
-    "/Users/albuquerque/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
-    "/Users/albuquerque/.nuget/packages/microsoft.netcore.app.ref/8.0.11/microsoft.netcore.app.ref.8.0.11.nupkg.sha512",
-    "/Users/albuquerque/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.11/microsoft.aspnetcore.app.ref.8.0.11.nupkg.sha512"
+    "/Users/albuquerque/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
   ],
   "logs": []
 }
