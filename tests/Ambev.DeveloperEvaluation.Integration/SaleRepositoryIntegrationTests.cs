@@ -132,7 +132,7 @@ public class SaleRepositoryIntegrationTests : IDisposable
 
         // Assert
         result.Should().NotBeNull();
-        result.Items.Should().HaveCount(5);
+        result.Should().HaveCount(5);
         result.TotalCount.Should().Be(10);
         result.Page.Should().Be(1);
         result.Size.Should().Be(5);
@@ -168,8 +168,8 @@ public class SaleRepositoryIntegrationTests : IDisposable
 
         // Assert
         result.Should().NotBeNull();
-        result.Items.Should().HaveCount(3);
-        result.Items.Should().OnlyContain(s => s.BranchId == branchId1);
+        result.Should().HaveCount(3);
+        result.Should().OnlyContain(s => s.BranchId == branchId1);
     }
 
     public void Dispose()

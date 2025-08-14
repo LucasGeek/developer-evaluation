@@ -107,7 +107,7 @@ public class SaleRepositoryTests
     {
         // Arrange
         var sales = SaleTestData.GenerateValidSales(10);
-        var paginatedResult = new Ambev.DeveloperEvaluation.WebApi.Common.PaginatedList<Sale>(
+        var paginatedResult = new Ambev.DeveloperEvaluation.Domain.Common.PaginatedList<Sale>(
             sales.Take(5).ToList(), 10, 1, 5);
         
         _repository.ListAsync(1, 5, "date", null, null, null, null, null, null)
@@ -118,7 +118,7 @@ public class SaleRepositoryTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Items.Should().HaveCount(5);
+        result.Should().HaveCount(5);
         result.TotalCount.Should().Be(10);
         result.Page.Should().Be(1);
         result.Size.Should().Be(5);
@@ -135,7 +135,7 @@ public class SaleRepositoryTests
         var saleNumber = "BRANCH12345678-0001";
 
         var filteredSales = SaleTestData.GenerateValidSales(3);
-        var paginatedResult = new Ambev.DeveloperEvaluation.WebApi.Common.PaginatedList<Sale>(
+        var paginatedResult = new Ambev.DeveloperEvaluation.Domain.Common.PaginatedList<Sale>(
             filteredSales, 3, 1, 10);
 
         _repository.ListAsync(1, 10, "date", minDate, maxDate, customerId, branchId, false, saleNumber)
@@ -146,7 +146,7 @@ public class SaleRepositoryTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Items.Should().HaveCount(3);
+        result.Should().HaveCount(3);
         await _repository.Received(1).ListAsync(1, 10, "date", minDate, maxDate, customerId, branchId, false, saleNumber);
     }
 }
