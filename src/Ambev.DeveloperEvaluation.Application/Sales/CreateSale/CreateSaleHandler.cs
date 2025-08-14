@@ -1,5 +1,7 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Messaging;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -9,15 +11,18 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Guid>
 {
     private readonly ISaleRepository _saleRepository;
+    private readonly IEventBus _eventBus;
     private readonly IMapper _mapper;
     private readonly ILogger<CreateSaleHandler> _logger;
 
     public CreateSaleHandler(
         ISaleRepository saleRepository,
+        IEventBus eventBus,
         IMapper mapper,
         ILogger<CreateSaleHandler> logger)
     {
         _saleRepository = saleRepository;
+        _eventBus = eventBus;
         _mapper = mapper;
         _logger = logger;
     }
@@ -57,6 +62,22 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Guid>
 
         // Persist to database
         await _saleRepository.CreateAsync(sale);
+
+        // Publish SaleCreated event
+        var saleCreatedEvent = new SaleCreatedEvent
+        {
+            SaleId = sale.Id,
+            SaleNumber = sale.SaleNumber,
+            CustomerId = sale.CustomerId,
+            CustomerDescription = sale.CustomerDescription,
+            BranchId = sale.BranchId,
+            BranchDescription = sale.BranchDescription,
+            TotalAmount = sale.TotalAmount,
+            CreatedAt = sale.CreatedAt,
+            ItemCount = sale.Items.Count
+        };
+
+        await _eventBus.PublishAsync(saleCreatedEvent);
 
         _logger.LogInformation(
             "Sale created successfully. SaleId: {SaleId}, SaleNumber: {SaleNumber}, TotalAmount: {TotalAmount}, CorrelationId: {CorrelationId}",
