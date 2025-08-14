@@ -1,4 +1,6 @@
 using Ambev.DeveloperEvaluation.ORM.MongoDB;
+using Ambev.DeveloperEvaluation.ORM.MongoDB.Repositories;
+using Ambev.DeveloperEvaluation.ORM.MongoDB.ReadModels;
 using Ambev.DeveloperEvaluation.ORM.Redis;
 using Ambev.DeveloperEvaluation.ORM.Messaging;
 using Microsoft.Extensions.Configuration;
@@ -11,33 +13,57 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddMongoDb(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<IMongoContext, MongoContext>();
+        // Add MongoDB only if connection string is available
+        var connectionString = configuration.GetConnectionString("MongoDbConnection");
+        if (!string.IsNullOrEmpty(connectionString))
+        {
+            services.AddSingleton<IMongoContext, MongoContext>();
+            
+            // Register read model repositories
+            services.AddScoped<IReadModelRepository<SaleReadModel>, MongoReadModelRepository<SaleReadModel>>();
+            services.AddScoped<IReadModelRepository<ProductReadModel>, MongoReadModelRepository<ProductReadModel>>();
+            services.AddScoped<IReadModelRepository<UserReadModel>, MongoReadModelRepository<UserReadModel>>();
+        }
+        else
+        {
+            // Add null object pattern repositories for development
+            services.AddScoped<IReadModelRepository<SaleReadModel>, NullReadModelRepository<SaleReadModel>>();
+            services.AddScoped<IReadModelRepository<ProductReadModel>, NullReadModelRepository<ProductReadModel>>();
+            services.AddScoped<IReadModelRepository<UserReadModel>, NullReadModelRepository<UserReadModel>>();
+        }
         return services;
     }
 
     public static IServiceCollection AddRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("RedisConnection") 
-            ?? throw new ArgumentNullException("RedisConnection");
-            
-        services.AddSingleton<IConnectionMultiplexer>(provider =>
-            ConnectionMultiplexer.Connect(connectionString));
-            
-        services.AddSingleton<ICacheService, RedisCacheService>();
-        
-        services.AddStackExchangeRedisCache(options =>
+        // Add Redis only if connection string is available
+        var connectionString = configuration.GetConnectionString("RedisConnection");
+        if (!string.IsNullOrEmpty(connectionString))
         {
-            options.Configuration = connectionString;
-        });
+            services.AddSingleton<IConnectionMultiplexer>(provider =>
+                ConnectionMultiplexer.Connect(connectionString));
+                
+            services.AddSingleton<ICacheService, RedisCacheService>();
+            
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = connectionString;
+            });
+        }
+        else
+        {
+            // Add a no-op cache service for development
+            services.AddSingleton<ICacheService, NullCacheService>();
+        }
         
         return services;
     }
 
     public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
     {
-        // Using logging-based event bus for domain events
-        // This follows CLAUDE.md guidance for "differential" - events are logged with structured data
-        services.AddScoped<IEventBus, LoggingEventBus>();
+        // Use MediatR-based event bus for proper CQRS event handling
+        // This enables domain event handlers to update read models
+        services.AddScoped<IEventBus, MediatREventBus>();
         
         return services;
     }

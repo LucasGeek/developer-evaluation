@@ -1,6 +1,8 @@
+using MediatR;
+
 namespace Ambev.DeveloperEvaluation.Domain.Events;
 
-public class SaleCreatedEvent
+public class SaleCreatedEvent : INotification
 {
     public Guid SaleId { get; set; }
     public string SaleNumber { get; set; } = string.Empty;
@@ -13,7 +15,7 @@ public class SaleCreatedEvent
     public int ItemCount { get; set; }
 }
 
-public class SaleModifiedEvent
+public class SaleModifiedEvent : INotification
 {
     public Guid SaleId { get; set; }
     public string SaleNumber { get; set; } = string.Empty;
@@ -25,7 +27,7 @@ public class SaleModifiedEvent
     public string ModificationReason { get; set; } = string.Empty;
 }
 
-public class SaleCancelledEvent
+public class SaleCancelledEvent : INotification
 {
     public Guid SaleId { get; set; }
     public string SaleNumber { get; set; } = string.Empty;
@@ -35,7 +37,7 @@ public class SaleCancelledEvent
     public int ItemCount { get; set; }
 }
 
-public class ItemCancelledEvent
+public class ItemCancelledEvent : INotification
 {
     public Guid SaleId { get; set; }
     public string SaleNumber { get; set; } = string.Empty;
