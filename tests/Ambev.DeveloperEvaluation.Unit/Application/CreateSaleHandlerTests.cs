@@ -1,6 +1,7 @@
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Messaging;
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application;
 public class CreateSaleHandlerTests
 {
     private readonly ISaleRepository _saleRepository;
+    private readonly IEventBus _eventBus;
     private readonly IMapper _mapper;
     private readonly ILogger<CreateSaleHandler> _logger;
     private readonly CreateSaleHandler _handler;
@@ -19,9 +21,10 @@ public class CreateSaleHandlerTests
     public CreateSaleHandlerTests()
     {
         _saleRepository = Substitute.For<ISaleRepository>();
+        _eventBus = Substitute.For<IEventBus>();
         _mapper = Substitute.For<IMapper>();
         _logger = Substitute.For<ILogger<CreateSaleHandler>>();
-        _handler = new CreateSaleHandler(_saleRepository, _mapper, _logger);
+        _handler = new CreateSaleHandler(_saleRepository, _eventBus, _mapper, _logger);
     }
 
     [Fact(DisplayName = "Handle should create sale with correct properties")]

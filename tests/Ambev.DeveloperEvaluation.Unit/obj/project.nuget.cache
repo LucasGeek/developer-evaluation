@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "dgSpecHash": "yOWAxnG+swU=",
-  "success": false,
+  "dgSpecHash": "dT5vCJ5P+Yk=",
+  "success": true,
   "projectFilePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj",
   "expectedPackageFiles": [
     "/Users/albuquerque/.nuget/packages/automapper/13.0.1/automapper.13.0.1.nupkg.sha512",
@@ -35,10 +35,14 @@
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.configuration/6.0.0/microsoft.extensions.configuration.6.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.configuration.abstractions/8.0.0/microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.configuration.binder/8.0.0/microsoft.extensions.configuration.binder.8.0.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/microsoft.extensions.dependencyinjection/8.0.1/microsoft.extensions.dependencyinjection.8.0.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.2/microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.dependencymodel/8.0.2/microsoft.extensions.dependencymodel.8.0.2.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/microsoft.extensions.diagnostics.abstractions/8.0.1/microsoft.extensions.diagnostics.abstractions.8.0.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.diagnostics.healthchecks/8.0.10/microsoft.extensions.diagnostics.healthchecks.8.0.10.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.diagnostics.healthchecks.abstractions/8.0.10/microsoft.extensions.diagnostics.healthchecks.abstractions.8.0.10.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/microsoft.extensions.fileproviders.abstractions/8.0.0/microsoft.extensions.fileproviders.abstractions.8.0.0.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/microsoft.extensions.hosting.abstractions/8.0.1/microsoft.extensions.hosting.abstractions.8.0.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.logging/8.0.1/microsoft.extensions.logging.8.0.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.logging.abstractions/8.0.2/microsoft.extensions.logging.abstractions.8.0.2.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/microsoft.extensions.options/8.0.2/microsoft.extensions.options.8.0.2.nupkg.sha512",
@@ -66,9 +70,6 @@
     "/Users/albuquerque/.nuget/packages/nsubstitute/5.1.0/nsubstitute.5.1.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/oneof/3.0.271/oneof.3.0.271.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/pipelines.sockets.unofficial/2.2.8/pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
-    "/Users/albuquerque/.nuget/packages/rebus/8.5.0/rebus.8.5.0.nupkg.sha512",
-    "/Users/albuquerque/.nuget/packages/rebus.postgresql/9.1.0/rebus.postgresql.9.1.0.nupkg.sha512",
-    "/Users/albuquerque/.nuget/packages/rebus.serviceprovider/8.0.0/rebus.serviceprovider.8.0.0.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/roslynator.analyzers/4.12.4/roslynator.analyzers.4.12.4.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/roslynator.core/4.12.4/roslynator.core.4.12.4.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/roslynator.testing.common/4.12.4/roslynator.testing.common.4.12.4.nupkg.sha512",
@@ -122,41 +123,5 @@
     "/Users/albuquerque/.nuget/packages/xunit.runner.visualstudio/2.8.2/xunit.runner.visualstudio.2.8.2.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/zstdsharp.port/0.7.3/zstdsharp.port.0.7.3.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "message": "Ambev.DeveloperEvaluation.ORM depends on MongoDB.Extensions.Context (>= 1.3.1) but MongoDB.Extensions.Context 1.3.1 was not found. MongoDB.Extensions.Context 1.4.0 was resolved instead.",
-      "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj",
-      "warningLevel": 1,
-      "filePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj",
-      "libraryId": "MongoDB.Extensions.Context",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "message": "Ambev.DeveloperEvaluation.ORM depends on Rebus (>= 8.4.5) but Rebus 8.4.5 was not found. Rebus 8.5.0 was resolved instead.",
-      "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj",
-      "warningLevel": 1,
-      "filePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj",
-      "libraryId": "Rebus",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    },
-    {
-      "code": "NU1107",
-      "level": "Error",
-      "message": "Version conflict detected for Microsoft.Extensions.DependencyInjection. Install/reference Microsoft.Extensions.DependencyInjection 8.0.1 directly to project Ambev.DeveloperEvaluation.Unit to resolve this issue. \n Ambev.DeveloperEvaluation.Unit -> Ambev.DeveloperEvaluation.ORM -> Microsoft.EntityFrameworkCore 8.0.10 -> Microsoft.Extensions.Logging 8.0.1 -> Microsoft.Extensions.DependencyInjection (>= 8.0.1) \n Ambev.DeveloperEvaluation.Unit -> Ambev.DeveloperEvaluation.ORM -> Rebus.ServiceProvider 8.0.0 -> Microsoft.Extensions.DependencyInjection (>= 3.0.0 && < 7.0.0).",
-      "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj",
-      "filePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj",
-      "libraryId": "Microsoft.Extensions.DependencyInjection",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
+  "logs": []
 }

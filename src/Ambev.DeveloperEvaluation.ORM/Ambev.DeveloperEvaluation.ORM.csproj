@@ -15,14 +15,11 @@
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
 		<!-- MongoDB for Read Models -->
 		<PackageReference Include="MongoDB.Driver" Version="2.28.0" />
-		<PackageReference Include="MongoDB.Extensions.Context" Version="1.3.1" />
+		<PackageReference Include="MongoDB.Extensions.Context" Version="1.4.0" />
 		<!-- Redis for Caching -->
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.10" />
 		<PackageReference Include="StackExchange.Redis" Version="2.8.16" />
-		<!-- Rebus for Messaging -->
-		<PackageReference Include="Rebus" Version="8.4.5" />
-		<PackageReference Include="Rebus.PostgreSql" Version="9.1.0" />
-		<PackageReference Include="Rebus.ServiceProvider" Version="8.0.0" />
+		<!-- Event Bus via Logging (simplified approach) -->
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Ambev.DeveloperEvaluation.Domain\Ambev.DeveloperEvaluation.Domain.csproj" />
