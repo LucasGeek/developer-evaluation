@@ -1,6 +1,8 @@
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -49,5 +51,40 @@ public class SalesController : BaseController
                 Message = "Sale created successfully",
                 Data = response
             });
+    }
+
+    /// <summary>
+    /// Retrieves a sale by its ID
+    /// </summary>
+    /// <param name="id">The unique identifier of the sale</param>
+    /// <returns>The sale details if found</returns>
+    /// <response code="200">Sale found and returned successfully</response>
+    /// <response code="404">Sale not found</response>
+    /// <response code="401">Unauthorized</response>
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<GetSaleResponse>), 200)]
+    [ProducesResponseType(typeof(ApiResponse), 404)]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var query = new GetSaleQuery(id);
+        var result = await _mediator.Send(query);
+        
+        if (result == null)
+        {
+            return NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "Sale not found"
+            });
+        }
+
+        var response = _mapper.Map<GetSaleResponse>(result);
+        
+        return Ok(new ApiResponseWithData<GetSaleResponse>
+        {
+            Success = true,
+            Message = "Sale retrieved successfully",
+            Data = response
+        });
     }
 }
