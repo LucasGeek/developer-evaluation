@@ -305,4 +305,163 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
         // Total sale: 36.00 + 160.00 = 196.00
         data.GetProperty("totalAmount").GetDecimal().Should().Be(196.00m);
     }
+
+    [Fact(DisplayName = "GET /api/sales should return paginated sales list")]
+    public async Task Get_SalesList_ShouldReturnPaginatedList()
+    {
+        // Arrange - Create multiple sales
+        var sales = new List<Guid>();
+        for (int i = 0; i < 5; i++)
+        {
+            var createRequest = new CreateSaleRequest
+            {
+                BranchId = Guid.NewGuid(),
+                BranchDescription = $"Branch {i}",
+                CustomerId = Guid.NewGuid(),
+                CustomerDescription = $"Customer {i}",
+                Date = DateTime.UtcNow.AddDays(-i),
+                Items = new List<CreateSaleItemRequest>
+                {
+                    new()
+                    {
+                        ProductId = Guid.NewGuid(),
+                        ProductDescription = $"Product {i}",
+                        Quantity = i + 1,
+                        UnitPrice = 10.00m * (i + 1)
+                    }
+                }
+            };
+
+            var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+            var createContent = await createResponse.Content.ReadAsStringAsync();
+            var createJsonDocument = JsonDocument.Parse(createContent);
+            sales.Add(createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid());
+        }
+
+        // Act
+        var response = await _client.GetAsync("/api/sales?page=1&size=3");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeTrue();
+        jsonDocument.RootElement.GetProperty("message").GetString().Should().Be("Sales list retrieved successfully");
+        
+        var data = jsonDocument.RootElement.GetProperty("data");
+        data.GetProperty("page").GetInt32().Should().Be(1);
+        data.GetProperty("size").GetInt32().Should().Be(3);
+        data.GetProperty("totalCount").GetInt32().Should().BeGreaterOrEqualTo(5);
+        data.GetProperty("hasNextPage").GetBoolean().Should().BeTrue();
+        data.GetProperty("hasPreviousPage").GetBoolean().Should().BeFalse();
+        
+        var salesArray = data.GetProperty("sales");
+        salesArray.GetArrayLength().Should().Be(3);
+    }
+
+    [Fact(DisplayName = "GET /api/sales should apply filters correctly")]
+    public async Task Get_SalesListWithFilters_ShouldApplyFiltersCorrectly()
+    {
+        // Arrange - Create sales with specific attributes
+        var branchId = Guid.NewGuid();
+        var customerId = Guid.NewGuid();
+        
+        var createRequest = new CreateSaleRequest
+        {
+            BranchId = branchId,
+            BranchDescription = "Filtered Branch",
+            CustomerId = customerId,
+            CustomerDescription = "Filtered Customer",
+            Date = DateTime.UtcNow,
+            Items = new List<CreateSaleItemRequest>
+            {
+                new()
+                {
+                    ProductId = Guid.NewGuid(),
+                    ProductDescription = "Filtered Product",
+                    Quantity = 5,
+                    UnitPrice = 20.00m
+                }
+            }
+        };
+
+        await _client.PostAsJsonAsync("/api/sales", createRequest);
+
+        // Act - Filter by branchId and customerId
+        var response = await _client.GetAsync($"/api/sales?branchId={branchId}&customerId={customerId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        var data = jsonDocument.RootElement.GetProperty("data");
+        var salesArray = data.GetProperty("sales");
+        
+        salesArray.GetArrayLength().Should().BeGreaterOrEqualTo(1);
+        
+        // Verify first sale matches filters
+        var firstSale = salesArray[0];
+        firstSale.GetProperty("branchId").GetGuid().Should().Be(branchId);
+        firstSale.GetProperty("customerId").GetGuid().Should().Be(customerId);
+        firstSale.GetProperty("branchDescription").GetString().Should().Be("Filtered Branch");
+        firstSale.GetProperty("customerDescription").GetString().Should().Be("Filtered Customer");
+    }
+
+    [Fact(DisplayName = "GET /api/sales should support ordering")]
+    public async Task Get_SalesListWithOrdering_ShouldReturnOrderedResults()
+    {
+        // Arrange - Create sales with different dates
+        var sales = new List<(Guid Id, DateTime Date)>();
+        for (int i = 0; i < 3; i++)
+        {
+            var date = DateTime.UtcNow.AddDays(-i);
+            var createRequest = new CreateSaleRequest
+            {
+                BranchId = Guid.NewGuid(),
+                BranchDescription = $"Branch {i}",
+                CustomerId = Guid.NewGuid(),
+                CustomerDescription = $"Customer {i}",
+                Date = date,
+                Items = new List<CreateSaleItemRequest>
+                {
+                    new()
+                    {
+                        ProductId = Guid.NewGuid(),
+                        ProductDescription = $"Product {i}",
+                        Quantity = 1,
+                        UnitPrice = 10.00m
+                    }
+                }
+            };
+
+            var createResponse = await _client.PostAsJsonAsync("/api/sales", createRequest);
+            var createContent = await createResponse.Content.ReadAsStringAsync();
+            var createJsonDocument = JsonDocument.Parse(createContent);
+            var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+            sales.Add((saleId, date));
+        }
+
+        // Act - Order by date ascending
+        var response = await _client.GetAsync("/api/sales?order=date");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        
+        var data = jsonDocument.RootElement.GetProperty("data");
+        var salesArray = data.GetProperty("sales");
+        
+        salesArray.GetArrayLength().Should().BeGreaterOrEqualTo(3);
+        
+        // Verify first sale is the oldest (when ordering by date ascending)
+        var firstSaleDate = salesArray[0].GetProperty("date").GetDateTime();
+        var secondSaleDate = salesArray[1].GetProperty("date").GetDateTime();
+        firstSaleDate.Should().BeBefore(secondSaleDate.AddSeconds(1)); // Allow for small time differences
+    }
 }

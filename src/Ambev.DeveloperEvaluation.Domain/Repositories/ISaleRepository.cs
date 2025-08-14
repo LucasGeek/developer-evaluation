@@ -10,10 +10,10 @@ public interface ISaleRepository
     Task<Sale?> GetByIdAsync(Guid id);
     Task<Sale?> GetBySaleNumberAsync(string saleNumber, Guid branchId);
     Task UpdateAsync(Sale sale);
-    Task<PaginatedList<Sale>> ListAsync(
+    Task<(List<Sale> Sales, int TotalCount)> ListAsync(
         int page, 
         int size, 
-        string order, 
+        string? order = null, 
         DateTime? minDate = null, 
         DateTime? maxDate = null, 
         Guid? customerId = null, 

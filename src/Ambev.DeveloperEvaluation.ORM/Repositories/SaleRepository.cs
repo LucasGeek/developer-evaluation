@@ -64,10 +64,10 @@ public class SaleRepository : ISaleRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<PaginatedList<Sale>> ListAsync(
+    public async Task<(List<Sale> Sales, int TotalCount)> ListAsync(
         int page, 
         int size, 
-        string order, 
+        string? order = null, 
         DateTime? minDate = null, 
         DateTime? maxDate = null, 
         Guid? customerId = null, 
@@ -97,16 +97,23 @@ public class SaleRepository : ISaleRepository
             query = query.Where(s => s.SaleNumber.Contains(saleNumber));
 
         // Apply ordering
-        query = order.ToLower() switch
+        if (!string.IsNullOrEmpty(order))
         {
-            "date" => query.OrderBy(s => s.Date),
-            "date_desc" => query.OrderByDescending(s => s.Date),
-            "total" => query.OrderBy(s => s.TotalAmount),
-            "total_desc" => query.OrderByDescending(s => s.TotalAmount),
-            "salenumber" => query.OrderBy(s => s.SaleNumber),
-            "salenumber_desc" => query.OrderByDescending(s => s.SaleNumber),
-            _ => query.OrderByDescending(s => s.CreatedAt)
-        };
+            query = order.ToLower() switch
+            {
+                "date" => query.OrderBy(s => s.Date),
+                "date_desc" => query.OrderByDescending(s => s.Date),
+                "total" => query.OrderBy(s => s.TotalAmount),
+                "total_desc" => query.OrderByDescending(s => s.TotalAmount),
+                "salenumber" => query.OrderBy(s => s.SaleNumber),
+                "salenumber_desc" => query.OrderByDescending(s => s.SaleNumber),
+                _ => query.OrderByDescending(s => s.CreatedAt)
+            };
+        }
+        else
+        {
+            query = query.OrderByDescending(s => s.CreatedAt);
+        }
 
         var totalCount = await query.CountAsync();
         var items = await query
@@ -114,6 +121,6 @@ public class SaleRepository : ISaleRepository
             .Take(size)
             .ToListAsync();
 
-        return new PaginatedList<Sale>(items, totalCount, page, size);
+        return (items, totalCount);
     }
 }

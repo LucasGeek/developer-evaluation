@@ -107,21 +107,19 @@ public class SaleRepositoryTests
     {
         // Arrange
         var sales = SaleTestData.GenerateValidSales(10);
-        var paginatedResult = new Ambev.DeveloperEvaluation.Domain.Common.PaginatedList<Sale>(
-            sales.Take(5).ToList(), 10, 1, 5);
+        var salesList = sales.Take(5).ToList();
+        var totalCount = 10;
         
         _repository.ListAsync(1, 5, "date", null, null, null, null, null, null)
-            .Returns(paginatedResult);
+            .Returns((salesList, totalCount));
 
         // Act
         var result = await _repository.ListAsync(1, 5, "date");
 
         // Assert
         result.Should().NotBeNull();
-        result.Should().HaveCount(5);
+        result.Sales.Should().HaveCount(5);
         result.TotalCount.Should().Be(10);
-        result.Page.Should().Be(1);
-        result.Size.Should().Be(5);
     }
 
     [Fact(DisplayName = "ListAsync should apply filters correctly")]
@@ -135,18 +133,18 @@ public class SaleRepositoryTests
         var saleNumber = "BRANCH12345678-0001";
 
         var filteredSales = SaleTestData.GenerateValidSales(3);
-        var paginatedResult = new Ambev.DeveloperEvaluation.Domain.Common.PaginatedList<Sale>(
-            filteredSales, 3, 1, 10);
+        var totalCount = 3;
 
         _repository.ListAsync(1, 10, "date", minDate, maxDate, customerId, branchId, false, saleNumber)
-            .Returns(paginatedResult);
+            .Returns((filteredSales, totalCount));
 
         // Act
         var result = await _repository.ListAsync(1, 10, "date", minDate, maxDate, customerId, branchId, false, saleNumber);
 
         // Assert
         result.Should().NotBeNull();
-        result.Should().HaveCount(3);
+        result.Sales.Should().HaveCount(3);
+        result.TotalCount.Should().Be(3);
         await _repository.Received(1).ListAsync(1, 10, "date", minDate, maxDate, customerId, branchId, false, saleNumber);
     }
 }

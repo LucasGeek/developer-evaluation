@@ -1,8 +1,10 @@
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
+using Ambev.DeveloperEvaluation.Application.Sales.ListSales;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ListSales;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -84,6 +86,33 @@ public class SalesController : BaseController
         {
             Success = true,
             Message = "Sale retrieved successfully",
+            Data = response
+        });
+    }
+
+    /// <summary>
+    /// Lists sales with pagination and filters
+    /// </summary>
+    /// <param name="request">The list sales request with pagination and filters</param>
+    /// <returns>A paginated list of sales</returns>
+    /// <response code="200">Sales list retrieved successfully</response>
+    /// <response code="400">Invalid request parameters</response>
+    /// <response code="401">Unauthorized</response>
+    [HttpGet]
+    [Authorize(Roles = "Customer,Manager,Admin")]
+    [ProducesResponseType(typeof(ApiResponseWithData<ListSalesResponse>), 200)]
+    [ProducesResponseType(typeof(ApiResponse), 400)]
+    public async Task<IActionResult> List([FromQuery] ListSalesRequest request)
+    {
+        var query = _mapper.Map<ListSalesQuery>(request);
+        var result = await _mediator.Send(query);
+        
+        var response = _mapper.Map<ListSalesResponse>(result);
+        
+        return Ok(new ApiResponseWithData<ListSalesResponse>
+        {
+            Success = true,
+            Message = "Sales list retrieved successfully",
             Data = response
         });
     }
