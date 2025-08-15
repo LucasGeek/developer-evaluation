@@ -6,6 +6,7 @@ using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.IoC;
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.ORM.Extensions;
+using Ambev.DeveloperEvaluation.ORM.Seeding;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ namespace Ambev.DeveloperEvaluation.WebApi;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         try
         {
@@ -74,6 +75,12 @@ public class Program
 
             app.MapControllers();
 
+            // Seed data in development environment
+            if (app.Environment.IsDevelopment())
+            {
+                await SeedDataAsync(app);
+            }
+
             app.Run();
         }
         catch (Exception ex)
@@ -83,6 +90,29 @@ public class Program
         finally
         {
             Log.CloseAndFlush();
+        }
+    }
+
+    private static async Task SeedDataAsync(WebApplication app)
+    {
+        try
+        {
+            Log.Information("Starting data seeding process...");
+            
+            using var scope = app.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<DefaultContext>();
+            
+            // Ensure database is created and migrations are applied
+            await context.Database.MigrateAsync();
+            
+            var seeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
+            await seeder.SeedAsync();
+            
+            Log.Information("Data seeding completed successfully");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error occurred during data seeding");
         }
     }
 }

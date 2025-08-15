@@ -6,6 +6,7 @@ using Ambev.DeveloperEvaluation.ORM.Messaging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+using Rebus.Config;
 
 namespace Ambev.DeveloperEvaluation.ORM.Extensions;
 
@@ -65,6 +66,18 @@ public static class ServiceCollectionExtensions
         // This enables domain event handlers to update read models
         services.AddScoped<IEventBus, MediatREventBus>();
         
+        // Rebus event bus is temporarily disabled until proper transport is configured
+        // services.AddScoped<RebusEventBus>();
+        
+        return services;
+    }
+
+    public static IServiceCollection AddRebus(this IServiceCollection services, IConfiguration configuration)
+    {
+        // For now, we'll use MediatR for event publishing
+        // In production, this could be extended with proper Rebus transport (Redis, RabbitMQ, etc.)
+        // services.AddRebus(configure => configure...);
+        
         return services;
     }
 
@@ -73,6 +86,7 @@ public static class ServiceCollectionExtensions
         services.AddMongoDb(configuration);
         services.AddRedisCache(configuration);
         services.AddEventBus(configuration);
+        services.AddRebus(configuration);
         
         return services;
     }

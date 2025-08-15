@@ -18,7 +18,10 @@
 		<PackageReference Include="MongoDB.Extensions.Context" Version="1.4.0" />
 		<!-- Redis for Caching -->
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.10" />
-		<PackageReference Include="StackExchange.Redis" Version="2.8.16" />
+		<PackageReference Include="Rebus" Version="8.8.0" />
+		<PackageReference Include="Rebus.Serilog" Version="8.0.0" />
+		<PackageReference Include="Rebus.ServiceProvider" Version="10.5.0" />
+		<PackageReference Include="StackExchange.Redis" Version="2.8.58" />
 		<!-- In-Memory and SQLite for Testing -->
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />

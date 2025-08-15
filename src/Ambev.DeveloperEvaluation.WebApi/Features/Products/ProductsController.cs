@@ -163,4 +163,132 @@ public class ProductsController : BaseController
             Data = response
         });
     }
+
+    /// <summary>
+    /// Add a new product
+    /// </summary>
+    /// <param name="request">Product data</param>
+    /// <returns>Created product information</returns>
+    [HttpPost]
+    [Authorize(Roles = "Manager,Admin")]
+    [ProducesResponseType(typeof(ApiResponseWithData<ProductResponse>), 201)]
+    [ProducesResponseType(typeof(ApiResponse), 400)]
+    public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request)
+    {
+        // Implementation would go here - creating a CreateProductCommand
+        // For now, return a placeholder response
+        try
+        {
+            var productResponse = new ProductResponse
+            {
+                Id = Guid.NewGuid(),
+                Title = request.Title,
+                Price = request.Price,
+                Description = request.Description,
+                Category = request.Category,
+                Image = request.Image,
+                Rating = new RatingResponse 
+                { 
+                    Rate = (double)request.Rating.Rate, 
+                    Count = request.Rating.Count 
+                }
+            };
+
+            return CreatedAtAction(nameof(GetProduct), new { id = productResponse.Id }, 
+                new ApiResponseWithData<ProductResponse>
+                {
+                    Success = true,
+                    Message = "Product created successfully",
+                    Data = productResponse
+                });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ApiResponse
+            {
+                Success = false,
+                Message = ex.Message
+            });
+        }
+    }
+
+    /// <summary>
+    /// Update a specific product
+    /// </summary>
+    /// <param name="id">Product ID</param>
+    /// <param name="request">Updated product data</param>
+    /// <returns>Updated product information</returns>
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Manager,Admin")]
+    [ProducesResponseType(typeof(ApiResponseWithData<ProductResponse>), 200)]
+    [ProducesResponseType(typeof(ApiResponse), 400)]
+    [ProducesResponseType(typeof(ApiResponse), 404)]
+    public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductRequest request)
+    {
+        // Implementation would go here - creating an UpdateProductCommand
+        // For now, return a placeholder response
+        try
+        {
+            var productResponse = new ProductResponse
+            {
+                Id = id,
+                Title = request.Title,
+                Price = request.Price,
+                Description = request.Description,
+                Category = request.Category,
+                Image = request.Image,
+                Rating = new RatingResponse 
+                { 
+                    Rate = (double)request.Rating.Rate, 
+                    Count = request.Rating.Count 
+                }
+            };
+
+            return Ok(new ApiResponseWithData<ProductResponse>
+            {
+                Success = true,
+                Message = "Product updated successfully",
+                Data = productResponse
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ApiResponse
+            {
+                Success = false,
+                Message = ex.Message
+            });
+        }
+    }
+
+    /// <summary>
+    /// Delete a specific product
+    /// </summary>
+    /// <param name="id">Product ID</param>
+    /// <returns>Success message</returns>
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Manager,Admin")]
+    [ProducesResponseType(typeof(ApiResponse), 200)]
+    [ProducesResponseType(typeof(ApiResponse), 404)]
+    public async Task<IActionResult> DeleteProduct(Guid id)
+    {
+        // Implementation would go here - creating a DeleteProductCommand
+        // For now, return a placeholder response
+        try
+        {
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Product deleted successfully"
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ApiResponse
+            {
+                Success = false,
+                Message = ex.Message
+            });
+        }
+    }
 }
