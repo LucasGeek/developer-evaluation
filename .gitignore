@@ -425,6 +425,14 @@ FodyWeavers.xsd
 bin/
 obj/
 
+# Ignorar subpastas bin/ e obj/ específicas do projeto
+src/**/bin/
+src/**/obj/
+tests/**/bin/
+tests/**/obj/
+**/obj/Debug/net8.0/
+**/bin/Debug/net8.0/
+
 # Common node modules locations
 /node_modules
 /wwwroot/node_modules
@@ -738,4 +746,3 @@ Backup of *.doc*
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,csharp,microsoftoffice,azurefunctions,azurite,visualstudiocode,intellij,intellij+all,intellij+iml,linux,macos
-
