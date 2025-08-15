@@ -109,6 +109,24 @@ public class SaleTests
             .WithMessage("Quantity cannot exceed 20 per item.");
     }
 
+    [Fact(DisplayName = "Should throw exception when total quantity of same product exceeds 20")]
+    public void Given_MultipleItemsSameProduct_When_TotalQuantityExceeds20_Then_ShouldThrowException()
+    {
+        // Arrange
+        var sale = SaleTestData.GenerateValidSale();
+        var productId = Guid.NewGuid();
+        var firstItem = new SaleItem(sale.Id, productId, "Test Product", 15, 10m);
+        var secondItem = new SaleItem(sale.Id, productId, "Test Product", 10, 10m); // Total would be 25
+
+        // Act - Add first item successfully
+        sale.AddItem(firstItem);
+        
+        // Act & Assert - Second item should fail
+        var action = () => sale.AddItem(secondItem);
+        action.Should().Throw<InvalidOperationException>()
+            .WithMessage("Cannot exceed 20 items of same product.");
+    }
+
     [Fact(DisplayName = "Cancel should set cancelled status and timestamp")]
     public void Given_Sale_When_Cancelling_Then_ShouldSetCancelledStatusAndTimestamp()
     {

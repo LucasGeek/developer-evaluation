@@ -240,7 +240,15 @@
               "target": "Package",
               "version": "[8.0.10, )"
             },
+            "Microsoft.EntityFrameworkCore.InMemory": {
+              "target": "Package",
+              "version": "[8.0.10, )"
+            },
             "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[8.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[8.0.10, )"
             },
@@ -260,9 +268,21 @@
               "target": "Package",
               "version": "[8.0.8, )"
             },
+            "Rebus": {
+              "target": "Package",
+              "version": "[8.8.0, )"
+            },
+            "Rebus.Serilog": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Rebus.ServiceProvider": {
+              "target": "Package",
+              "version": "[10.5.0, )"
+            },
             "StackExchange.Redis": {
               "target": "Package",
-              "version": "[2.8.16, )"
+              "version": "[2.8.58, )"
             }
           },
           "imports": [
