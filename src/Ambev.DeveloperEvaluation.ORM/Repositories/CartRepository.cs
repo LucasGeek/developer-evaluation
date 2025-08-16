@@ -57,13 +57,12 @@ public class CartRepository : ICartRepository
         return new PaginatedList<Cart>(items, totalCount, page, limit);
     }
 
-    public async Task<PaginatedList<Cart>> GetByUserIdRangeAsync(int startUserId, int endUserId, int page = 1, int limit = 20, string? sort = null, CancellationToken cancellationToken = default)
+    public async Task<PaginatedList<Cart>> GetByUserIdRangeAsync(Guid startUserId, Guid endUserId, int page = 1, int limit = 20, string? sort = null, CancellationToken cancellationToken = default)
     {
-        // Note: This implementation assumes we can convert Guid UserId to int for range queries
-        // In a real scenario, you might need to adjust this based on your user ID strategy
+        // Filter by Guid range using CompareTo method for Guid comparison
         var query = _context.Carts
             .Include(c => c.Products)
-            .Where(c => c.UserId.ToString().GetHashCode() >= startUserId && c.UserId.ToString().GetHashCode() <= endUserId);
+            .Where(c => c.UserId.CompareTo(startUserId) >= 0 && c.UserId.CompareTo(endUserId) <= 0);
 
         // Apply sorting
         query = sort?.ToLower() switch

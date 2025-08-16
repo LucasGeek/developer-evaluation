@@ -9,6 +9,6 @@ public class ListCartsQuery : IQuery<ListCartsResult>
     public string? Sort { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public int? StartUserId { get; set; }
-    public int? EndUserId { get; set; }
+    public Guid? StartUserId { get; set; }
+    public Guid? EndUserId { get; set; }
 }

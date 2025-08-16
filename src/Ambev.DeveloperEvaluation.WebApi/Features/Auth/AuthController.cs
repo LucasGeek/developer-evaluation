@@ -1,9 +1,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Auth.AuthenticateUserFeature;
 using Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser;
+using Ambev.DeveloperEvaluation.Common.Validation;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Auth;
 
@@ -12,6 +14,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Auth;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[Tags("Authentication")]
 public class AuthController : BaseController
 {
     private readonly IMediator _mediator;
@@ -31,29 +34,45 @@ public class AuthController : BaseController
     /// <summary>
     /// Authenticates a user with their credentials
     /// </summary>
-    /// <param name="request">The login request</param>
+    /// <param name="request">The login request containing username and password</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Authentication token if successful</returns>
+    /// <returns>JWT authentication token if credentials are valid</returns>
+    /// <response code="200">Successfully authenticated - returns JWT token</response>
+    /// <response code="400">Invalid request data</response>
+    /// <response code="401">Invalid credentials</response>
     [HttpPost("login")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(ApiResponseWithData<AuthenticateUserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] AuthenticateUserRequest request, CancellationToken cancellationToken)
     {
-        var validator = new AuthenticateUserRequestValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
-
-        if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
-
-        var command = _mapper.Map<AuthenticateUserCommand>(request);
-        var response = await _mediator.Send(command, cancellationToken);
-
-        return Ok(new ApiResponseWithData<AuthenticateUserResponse>
+        try
         {
-            Success = true,
-            Message = "User authenticated successfully",
-            Data = _mapper.Map<AuthenticateUserResponse>(response)
-        });
+            var validator = new AuthenticateUserRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<AuthenticateUserCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
+
+            return Ok(new ApiResponseWithData<AuthenticateUserResponse>
+            {
+                Success = true,
+                Message = "User authenticated successfully",
+                Data = _mapper.Map<AuthenticateUserResponse>(response)
+            });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new ApiResponse
+            {
+                Success = false,
+                Message = ex.Message,
+                Errors = new[] { new ValidationErrorDetail { Error = "Authentication", Detail = "Authentication failed" } }
+            });
+        }
     }
 }

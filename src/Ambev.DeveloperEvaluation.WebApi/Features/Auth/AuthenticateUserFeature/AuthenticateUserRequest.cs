@@ -6,10 +6,10 @@
 public class AuthenticateUserRequest
 {
     /// <summary>
-    /// Gets or sets the user's email address for authentication.
-    /// Must be a valid email format.
+    /// Gets or sets the username for authentication.
+    /// Can be email or username.
     /// </summary>
-    public string Email { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the user's password for authentication.

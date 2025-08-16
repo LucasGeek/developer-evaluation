@@ -37,6 +37,12 @@ public class SaleItemConfiguration : IEntityTypeConfiguration<SaleItem>
             .HasPrecision(18, 2)
             .IsRequired();
 
+        builder.Property(si => si.CreatedAt)
+            .IsRequired();
+            
+        builder.Property(si => si.UpdatedAt)
+            .IsRequired();
+
         builder.HasIndex(si => si.SaleId)
             .HasDatabaseName("IX_SaleItems_SaleId");
             

@@ -2,18 +2,19 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 
+/// <summary>
+/// Command for creating a new sale
+/// </summary>
 public record CreateSaleCommand(
     Guid BranchId,
-    string BranchDescription,
     Guid CustomerId,
-    string CustomerDescription,
-    DateTime Date,
     List<CreateSaleItemDto> Items
 ) : IRequest<Guid>;
 
+/// <summary>
+/// DTO for sale items in create command
+/// </summary>
 public record CreateSaleItemDto(
     Guid ProductId,
-    string ProductDescription,
-    int Quantity,
-    decimal UnitPrice
+    int Quantity
 );

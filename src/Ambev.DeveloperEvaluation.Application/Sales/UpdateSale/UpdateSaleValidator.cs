@@ -16,17 +16,6 @@ public class UpdateSaleValidator : AbstractValidator<UpdateSaleCommand>
             .LessThanOrEqualTo(DateTime.UtcNow.AddDays(1))
             .WithMessage("Sale date cannot be in the future");
 
-        RuleFor(x => x.CustomerDescription)
-            .NotEmpty()
-            .WithMessage("Customer description is required")
-            .MaximumLength(100)
-            .WithMessage("Customer description must not exceed 100 characters");
-
-        RuleFor(x => x.BranchDescription)
-            .NotEmpty()
-            .WithMessage("Branch description is required")
-            .MaximumLength(100)
-            .WithMessage("Branch description must not exceed 100 characters");
 
         RuleFor(x => x.Items)
             .NotEmpty()
@@ -42,7 +31,7 @@ public class UpdateSaleValidator : AbstractValidator<UpdateSaleCommand>
     }
 }
 
-public class UpdateSaleItemValidator : AbstractValidator<UpdateSaleItemCommand>
+public class UpdateSaleItemValidator : AbstractValidator<UpdateSaleItemDto>
 {
     public UpdateSaleItemValidator()
     {
@@ -50,20 +39,9 @@ public class UpdateSaleItemValidator : AbstractValidator<UpdateSaleItemCommand>
             .NotEmpty()
             .WithMessage("Product ID is required");
 
-        RuleFor(x => x.ProductDescription)
-            .NotEmpty()
-            .WithMessage("Product description is required")
-            .MaximumLength(100)
-            .WithMessage("Product description must not exceed 100 characters");
-
         RuleFor(x => x.Quantity)
             .GreaterThan(0)
-            .WithMessage("Quantity must be greater than 0")
             .LessThanOrEqualTo(20)
-            .WithMessage("Quantity cannot exceed 20 per item");
-
-        RuleFor(x => x.UnitPrice)
-            .GreaterThan(0)
-            .WithMessage("Unit price must be greater than 0");
+            .WithMessage("Quantity must be between 1 and 20 (business rule)");
     }
 }

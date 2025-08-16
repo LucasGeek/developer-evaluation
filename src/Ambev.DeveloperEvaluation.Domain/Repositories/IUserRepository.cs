@@ -33,6 +33,14 @@ public interface IUserRepository
     Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves a user by their username
+    /// </summary>
+    /// <param name="username">The username to search for</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The user if found, null otherwise</returns>
+    Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Deletes a user from the repository
     /// </summary>
     /// <param name="id">The unique identifier of the user to delete</param>

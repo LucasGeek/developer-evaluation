@@ -10,7 +10,6 @@
     <Folder Include="Exceptions\" />
     <Folder Include="Repositories\" />
     <Folder Include="Events\" />
-    <Folder Include="ValueObjects\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +18,18 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ambev.DeveloperEvaluation.Common\Ambev.DeveloperEvaluation.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ValueObjects\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="ValueObjects\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="ValueObjects\**" />
   </ItemGroup>
 
 </Project>

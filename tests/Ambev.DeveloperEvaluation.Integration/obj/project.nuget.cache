@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Vpb96tdKi08=",
+  "dgSpecHash": "tF8LHdXMtok=",
   "success": true,
   "projectFilePath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
   "expectedPackageFiles": [
@@ -121,6 +121,7 @@
     "/Users/albuquerque/.nuget/packages/sqlitepclraw.provider.e_sqlite3/2.1.6/sqlitepclraw.provider.e_sqlite3.2.1.6.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/stackexchange.redis/2.8.58/stackexchange.redis.2.8.58.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/swashbuckle.aspnetcore/6.8.1/swashbuckle.aspnetcore.6.8.1.nupkg.sha512",
+    "/Users/albuquerque/.nuget/packages/swashbuckle.aspnetcore.annotations/6.8.1/swashbuckle.aspnetcore.annotations.6.8.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/swashbuckle.aspnetcore.swagger/6.8.1/swashbuckle.aspnetcore.swagger.6.8.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.8.1/swashbuckle.aspnetcore.swaggergen.6.8.1.nupkg.sha512",
     "/Users/albuquerque/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.8.1/swashbuckle.aspnetcore.swaggerui.6.8.1.nupkg.sha512",

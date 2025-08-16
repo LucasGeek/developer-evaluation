@@ -1,0 +1,49 @@
+using MediatR;
+using Ambev.DeveloperEvaluation.Domain.Events;
+using Microsoft.Extensions.Logging;
+
+namespace Ambev.DeveloperEvaluation.Application.Events;
+
+/// <summary>
+/// Event handler for SaleCancelledEvent
+/// </summary>
+public class SaleCancelledEventHandler : INotificationHandler<SaleCancelledEvent>
+{
+    private readonly ILogger<SaleCancelledEventHandler> _logger;
+
+    public SaleCancelledEventHandler(ILogger<SaleCancelledEventHandler> logger)
+    {
+        _logger = logger;
+    }
+
+    public async Task Handle(SaleCancelledEvent notification, CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogInformation(
+                "Processing SaleCancelledEvent for Sale {SaleNumber} (ID: {SaleId}). " +
+                "TotalAmount: {TotalAmount}, ItemCount: {ItemCount}, CancelledAt: {CancelledAt}",
+                notification.SaleNumber,
+                notification.SaleId,
+                notification.TotalAmount,
+                notification.ItemCount,
+                notification.CancelledAt);
+
+            // Here you could implement additional business logic such as:
+            // - Update inventory counts
+            // - Send notifications to customers
+            // - Update analytics/reporting systems
+            // - Trigger refund processes
+            // - Update read models for cancellation reporting
+
+            _logger.LogInformation("Sale cancellation event processed successfully for Sale {SaleNumber}", notification.SaleNumber);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing SaleCancelledEvent for Sale ID: {SaleId}", notification.SaleId);
+            // Consider retrying logic or dead letter queue for critical business processes
+        }
+
+        await Task.CompletedTask;
+    }
+}

@@ -21,6 +21,7 @@ public class Sale : BaseEntity
         Id = Guid.NewGuid();
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
+        RowVersion = new byte[8]; // Initialize with 8 bytes for PostgreSQL
     }
 
     public Sale(string saleNumber, DateTime date, Guid customerId, string customerDescription, Guid branchId, string branchDescription) : this()

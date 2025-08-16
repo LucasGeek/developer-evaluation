@@ -6,9 +6,8 @@ namespace Ambev.DeveloperEvaluation.Application.Auth.AuthenticateUser
     {
         public AuthenticateUserValidator()
         {
-            RuleFor(x => x.Email)
-                .NotEmpty()
-                .EmailAddress();
+            RuleFor(x => x.Username)
+                .NotEmpty();
 
             RuleFor(x => x.Password)
                 .NotEmpty()

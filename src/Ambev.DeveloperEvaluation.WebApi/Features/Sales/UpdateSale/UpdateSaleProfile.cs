@@ -9,7 +9,7 @@ public class UpdateSaleProfile : Profile
     public UpdateSaleProfile()
     {
         CreateMap<UpdateSaleRequest, UpdateSaleCommand>();
-        CreateMap<UpdateSaleItemRequest, UpdateSaleItemCommand>();
+        CreateMap<UpdateSaleItemRequest, UpdateSaleItemDto>();
         
         CreateMap<Sale, UpdateSaleResult>();
         CreateMap<SaleItem, UpdateSaleItemResult>();

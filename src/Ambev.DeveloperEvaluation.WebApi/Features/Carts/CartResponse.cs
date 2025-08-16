@@ -16,16 +16,16 @@ public class CartItemResponse
 
 public class CartListResponse
 {
-    public List<CartResponse> Carts { get; set; } = new();
-    public int Page { get; set; }
-    public int Limit { get; set; }
-    public int Total { get; set; }
-    public int Pages { get; set; }
+    public List<CartResponse> Data { get; set; } = new();
+    public int TotalItems { get; set; }
+    public int CurrentPage { get; set; }
+    public int TotalPages { get; set; }
 }
 
 public class CreateCartRequest
 {
     public Guid UserId { get; set; }
+    public DateTime Date { get; set; }
     public List<CartItemRequest> Products { get; set; } = new();
 }
 

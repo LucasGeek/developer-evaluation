@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using Rebus.Config;
+using Serilog;
 
 namespace Ambev.DeveloperEvaluation.ORM.Extensions;
 
@@ -14,16 +15,30 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddMongoDb(this IServiceCollection services, IConfiguration configuration)
     {
+        
         // Add MongoDB only if connection string is available
         var connectionString = configuration.GetConnectionString("MongoDbConnection");
+        
         if (!string.IsNullOrEmpty(connectionString))
         {
-            services.AddSingleton<IMongoContext, MongoContext>();
-            
-            // Register read model repositories
-            services.AddScoped<IReadModelRepository<SaleReadModel>, MongoReadModelRepository<SaleReadModel>>();
-            services.AddScoped<IReadModelRepository<ProductReadModel>, MongoReadModelRepository<ProductReadModel>>();
-            services.AddScoped<IReadModelRepository<UserReadModel>, MongoReadModelRepository<UserReadModel>>();
+            try
+            {
+                services.AddSingleton<IMongoContext, MongoContext>();
+                
+                // Register read model repositories
+                services.AddScoped<IReadModelRepository<SaleReadModel>, MongoReadModelRepository<SaleReadModel>>();
+                services.AddScoped<IReadModelRepository<ProductReadModel>, MongoReadModelRepository<ProductReadModel>>();
+                services.AddScoped<IReadModelRepository<UserReadModel>, MongoReadModelRepository<UserReadModel>>();
+                
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "❌ [MONGO] MongoDB setup failed, falling back to null repositories");
+                // If MongoDB setup fails, fall back to null repositories
+                services.AddScoped<IReadModelRepository<SaleReadModel>, NullReadModelRepository<SaleReadModel>>();
+                services.AddScoped<IReadModelRepository<ProductReadModel>, NullReadModelRepository<ProductReadModel>>();
+                services.AddScoped<IReadModelRepository<UserReadModel>, NullReadModelRepository<UserReadModel>>();
+            }
         }
         else
         {
@@ -37,19 +52,44 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
+        
         // Add Redis only if connection string is available
         var connectionString = configuration.GetConnectionString("RedisConnection");
+        
         if (!string.IsNullOrEmpty(connectionString))
         {
-            services.AddSingleton<IConnectionMultiplexer>(provider =>
-                ConnectionMultiplexer.Connect(connectionString));
-                
-            services.AddSingleton<ICacheService, RedisCacheService>();
-            
-            services.AddStackExchangeRedisCache(options =>
+            try
             {
-                options.Configuration = connectionString;
-            });
+                
+                services.AddSingleton<IConnectionMultiplexer>(provider =>
+                {
+                    try
+                    {
+                        var connection = ConnectionMultiplexer.Connect(connectionString);
+                        return connection;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "❌ [REDIS] Redis connection failed, returning null");
+                        // If Redis connection fails, return null and fall back to NullCacheService
+                        return null;
+                    }
+                });
+                    
+                services.AddSingleton<ICacheService, RedisCacheService>();
+                
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = connectionString;
+                });
+                
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "❌ [REDIS] Redis setup failed, falling back to null cache service");
+                // If any Redis setup fails, fall back to null cache service
+                services.AddSingleton<ICacheService, NullCacheService>();
+            }
         }
         else
         {

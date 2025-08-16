@@ -20,6 +20,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
 [ApiController]
 [Route("api/[controller]")]
+[Tags("Sales")]
 [Authorize]
 public class SalesController : BaseController
 {
@@ -47,7 +48,15 @@ public class SalesController : BaseController
     [ProducesResponseType(typeof(ApiResponse), 400)]
     public async Task<IActionResult> Create([FromBody] CreateSaleRequest request)
     {
-        var command = _mapper.Map<CreateSaleCommand>(request);
+        // Extract customer ID from JWT token
+        var customerId = GetCurrentUserGuid();
+        
+        var command = new CreateSaleCommand(
+            request.BranchId,
+            customerId,
+            request.Items.Select(_mapper.Map<CreateSaleItemDto>).ToList()
+        );
+        
         var saleId = await _mediator.Send(command);
         
         var response = new CreateSaleResponse { Id = saleId };
@@ -143,8 +152,7 @@ public class SalesController : BaseController
     {
         try
         {
-            var command = _mapper.Map<UpdateSaleCommand>(request);
-            command.Id = id;
+            var command = new UpdateSaleCommand(id, request.Date, request.Items.Select(_mapper.Map<UpdateSaleItemDto>).ToList());
             
             var result = await _mediator.Send(command);
             var response = _mapper.Map<UpdateSaleResponse>(result);

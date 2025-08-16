@@ -1,6 +1,7 @@
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
 using Ambev.DeveloperEvaluation.Application.Products.ListProducts;
 using Ambev.DeveloperEvaluation.Application.Products.GetCategories;
+using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using AutoMapper;
 using MediatR;
@@ -11,6 +12,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Products;
 
 [ApiController]
 [Route("api/[controller]")]
+[Tags("Products")]
 public class ProductsController : BaseController
 {
     private readonly IMediator _mediator;
@@ -23,47 +25,46 @@ public class ProductsController : BaseController
     }
 
     /// <summary>
-    /// Get all products with pagination, filtering and sorting
+    /// Retrieve all products with pagination, filtering and sorting
     /// </summary>
-    /// <param name="limit">Number of products per page (default: 20)</param>
-    /// <param name="sort">Sort field (price, title, price-desc, title-desc)</param>
-    /// <param name="page">Page number (default: 1)</param>
-    /// <returns>Paginated list of products</returns>
+    /// <param name="_size">Number of products per page (default: 10, max: 100)</param>
+    /// <param name="_order">Ordering of results (e.g., "price desc", "title asc")</param>
+    /// <param name="_page">Page number starting from 1 (default: 1)</param>
+    /// <returns>Paginated list of products with metadata</returns>
+    /// <response code="200">Successfully retrieved products</response>
+    /// <response code="400">Invalid pagination parameters</response>
+    /// <response code="401">Authentication required</response>
     [HttpGet]
-    [ProducesResponseType(typeof(ApiResponseWithData<ProductListResponse>), 200)]
+    [Authorize]
+    [ProducesResponseType(typeof(ProductListResponse), 200)]
     [ProducesResponseType(typeof(ApiResponse), 400)]
+    [ProducesResponseType(typeof(ApiResponse), 401)]
     public async Task<IActionResult> GetProducts(
-        [FromQuery] int limit = 20, 
-        [FromQuery] string? sort = null,
-        [FromQuery] int page = 1)
+        [FromQuery] int _size = 10, 
+        [FromQuery] string? _order = null,
+        [FromQuery] int _page = 1)
     {
-        if (limit > 100) limit = 100; // Prevent abuse
-        if (page < 1) page = 1;
+        if (_size > 100) _size = 100; // Prevent abuse
+        if (_page < 1) _page = 1;
 
         var query = new ListProductsQuery 
         { 
-            Page = page, 
-            Limit = limit, 
-            Sort = sort 
+            Page = _page, 
+            Limit = _size, 
+            Sort = _order 
         };
         
         var result = await _mediator.Send(query);
         
         var response = new ProductListResponse
         {
-            Products = result.Products.Select(p => _mapper.Map<ProductResponse>(p)).ToList(),
-            Page = result.Page,
-            Limit = result.PageSize,
-            Total = result.TotalCount,
-            Pages = result.TotalPages
+            Data = result.Products.Select(p => _mapper.Map<ProductResponse>(p)).ToList(),
+            CurrentPage = result.Page,
+            TotalItems = result.TotalCount,
+            TotalPages = result.TotalPages
         };
 
-        return Ok(new ApiResponseWithData<ProductListResponse>
-        {
-            Success = true,
-            Message = "Products retrieved successfully",
-            Data = response
-        });
+        return Ok(response);
     }
 
     /// <summary>
@@ -71,8 +72,9 @@ public class ProductsController : BaseController
     /// </summary>
     /// <param name="id">Product ID</param>
     /// <returns>Product details</returns>
-    [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(ApiResponseWithData<ProductResponse>), 200)]
+    [HttpGet("{id}")]
+    [Authorize]
+    [ProducesResponseType(typeof(ProductResponse), 200)]
     [ProducesResponseType(typeof(ApiResponse), 404)]
     public async Task<IActionResult> GetProduct(Guid id)
     {
@@ -89,13 +91,7 @@ public class ProductsController : BaseController
         }
 
         var response = _mapper.Map<ProductResponse>(result);
-
-        return Ok(new ApiResponseWithData<ProductResponse>
-        {
-            Success = true,
-            Message = "Product retrieved successfully",
-            Data = response
-        });
+        return Ok(response);
     }
 
     /// <summary>
@@ -103,45 +99,42 @@ public class ProductsController : BaseController
     /// </summary>
     /// <returns>List of categories</returns>
     [HttpGet("categories")]
-    [ProducesResponseType(typeof(ApiResponseWithData<List<string>>), 200)]
+    [Authorize]
+    [ProducesResponseType(typeof(List<string>), 200)]
     public async Task<IActionResult> GetCategories()
     {
         var query = new GetCategoriesQuery();
         var result = await _mediator.Send(query);
 
-        return Ok(new ApiResponseWithData<List<string>>
-        {
-            Success = true,
-            Message = "Categories retrieved successfully",
-            Data = result.Categories
-        });
+        return Ok(result.Categories);
     }
 
     /// <summary>
     /// Get products by category
     /// </summary>
     /// <param name="category">Category name</param>
-    /// <param name="limit">Number of products per page (default: 20)</param>
-    /// <param name="sort">Sort field (price, title, price-desc, title-desc)</param>
-    /// <param name="page">Page number (default: 1)</param>
+    /// <param name="_size">Number of products per page (default: 10)</param>
+    /// <param name="_order">Ordering of results (e.g., "price desc, title asc")</param>
+    /// <param name="_page">Page number (default: 1)</param>
     /// <returns>Paginated list of products in category</returns>
     [HttpGet("category/{category}")]
-    [ProducesResponseType(typeof(ApiResponseWithData<ProductListResponse>), 200)]
+    [Authorize]
+    [ProducesResponseType(typeof(ProductListResponse), 200)]
     [ProducesResponseType(typeof(ApiResponse), 400)]
     public async Task<IActionResult> GetProductsByCategory(
         string category,
-        [FromQuery] int limit = 20,
-        [FromQuery] string? sort = null,
-        [FromQuery] int page = 1)
+        [FromQuery] int _size = 10,
+        [FromQuery] string? _order = null,
+        [FromQuery] int _page = 1)
     {
-        if (limit > 100) limit = 100;
-        if (page < 1) page = 1;
+        if (_size > 100) _size = 100;
+        if (_page < 1) _page = 1;
 
         var query = new ListProductsQuery
         {
-            Page = page,
-            Limit = limit,
-            Sort = sort,
+            Page = _page,
+            Limit = _size,
+            Sort = _order,
             Category = category
         };
 
@@ -149,19 +142,13 @@ public class ProductsController : BaseController
 
         var response = new ProductListResponse
         {
-            Products = result.Products.Select(p => _mapper.Map<ProductResponse>(p)).ToList(),
-            Page = result.Page,
-            Limit = result.PageSize,
-            Total = result.TotalCount,
-            Pages = result.TotalPages
+            Data = result.Products.Select(p => _mapper.Map<ProductResponse>(p)).ToList(),
+            CurrentPage = result.Page,
+            TotalItems = result.TotalCount,
+            TotalPages = result.TotalPages
         };
 
-        return Ok(new ApiResponseWithData<ProductListResponse>
-        {
-            Success = true,
-            Message = $"Products in category '{category}' retrieved successfully",
-            Data = response
-        });
+        return Ok(response);
     }
 
     /// <summary>
@@ -171,36 +158,30 @@ public class ProductsController : BaseController
     /// <returns>Created product information</returns>
     [HttpPost]
     [Authorize(Roles = "Manager,Admin")]
-    [ProducesResponseType(typeof(ApiResponseWithData<ProductResponse>), 201)]
+    [ProducesResponseType(typeof(ProductResponse), 201)]
     [ProducesResponseType(typeof(ApiResponse), 400)]
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request)
     {
-        // Implementation would go here - creating a CreateProductCommand
-        // For now, return a placeholder response
         try
         {
-            var productResponse = new ProductResponse
-            {
-                Id = Guid.NewGuid(),
-                Title = request.Title,
-                Price = request.Price,
-                Description = request.Description,
-                Category = request.Category,
-                Image = request.Image,
-                Rating = new RatingResponse 
-                { 
-                    Rate = (double)request.Rating.Rate, 
-                    Count = request.Rating.Count 
-                }
-            };
+            var command = _mapper.Map<CreateProductCommand>(request);
+            var productId = await _mediator.Send(command);
 
-            return CreatedAtAction(nameof(GetProduct), new { id = productResponse.Id }, 
-                new ApiResponseWithData<ProductResponse>
+            // Get the created product to return in response
+            var getProductQuery = new GetProductQuery(productId);
+            var createdProduct = await _mediator.Send(getProductQuery);
+            
+            if (createdProduct == null)
+            {
+                return BadRequest(new ApiResponse
                 {
-                    Success = true,
-                    Message = "Product created successfully",
-                    Data = productResponse
+                    Success = false,
+                    Message = "Product was created but could not be retrieved"
                 });
+            }
+
+            var productResponse = _mapper.Map<ProductResponse>(createdProduct);
+            return CreatedAtAction(nameof(GetProduct), new { id = productResponse.Id }, productResponse);
         }
         catch (Exception ex)
         {
@@ -218,9 +199,9 @@ public class ProductsController : BaseController
     /// <param name="id">Product ID</param>
     /// <param name="request">Updated product data</param>
     /// <returns>Updated product information</returns>
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id}")]
     [Authorize(Roles = "Manager,Admin")]
-    [ProducesResponseType(typeof(ApiResponseWithData<ProductResponse>), 200)]
+    [ProducesResponseType(typeof(ProductResponse), 200)]
     [ProducesResponseType(typeof(ApiResponse), 400)]
     [ProducesResponseType(typeof(ApiResponse), 404)]
     public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductRequest request)
@@ -244,12 +225,7 @@ public class ProductsController : BaseController
                 }
             };
 
-            return Ok(new ApiResponseWithData<ProductResponse>
-            {
-                Success = true,
-                Message = "Product updated successfully",
-                Data = productResponse
-            });
+            return Ok(productResponse);
         }
         catch (Exception ex)
         {
@@ -266,9 +242,9 @@ public class ProductsController : BaseController
     /// </summary>
     /// <param name="id">Product ID</param>
     /// <returns>Success message</returns>
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id}")]
     [Authorize(Roles = "Manager,Admin")]
-    [ProducesResponseType(typeof(ApiResponse), 200)]
+    [ProducesResponseType(200)]
     [ProducesResponseType(typeof(ApiResponse), 404)]
     public async Task<IActionResult> DeleteProduct(Guid id)
     {
@@ -276,11 +252,7 @@ public class ProductsController : BaseController
         // For now, return a placeholder response
         try
         {
-            return Ok(new ApiResponse
-            {
-                Success = true,
-                Message = "Product deleted successfully"
-            });
+            return Ok(new { message = "Product deleted successfully" });
         }
         catch (Exception ex)
         {

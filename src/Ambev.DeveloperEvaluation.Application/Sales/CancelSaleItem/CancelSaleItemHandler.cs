@@ -1,4 +1,6 @@
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Messaging;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -8,15 +10,18 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
 public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, CancelSaleItemResult>
 {
     private readonly ISaleRepository _saleRepository;
+    private readonly IEventBus _eventBus;
     private readonly IMapper _mapper;
     private readonly ILogger<CancelSaleItemHandler> _logger;
 
     public CancelSaleItemHandler(
         ISaleRepository saleRepository,
+        IEventBus eventBus,
         IMapper mapper,
         ILogger<CancelSaleItemHandler> logger)
     {
         _saleRepository = saleRepository;
+        _eventBus = eventBus;
         _mapper = mapper;
         _logger = logger;
     }
@@ -54,12 +59,29 @@ public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, Canc
             itemToRemove.ProductDescription, existingSale.SaleNumber);
 
         var productDescription = itemToRemove.ProductDescription;
+        var itemQuantity = itemToRemove.Quantity;
+        var itemTotal = itemToRemove.Total;
 
         // Remove the item using domain method
         existingSale.RemoveItemById(itemToRemove.Id);
 
         // Update in repository
         await _saleRepository.UpdateAsync(existingSale);
+
+        // Publish ItemCancelledEvent
+        var itemCancelledEvent = new ItemCancelledEvent
+        {
+            SaleId = existingSale.Id,
+            SaleNumber = existingSale.SaleNumber,
+            ItemId = request.ItemId,
+            ProductDescription = productDescription,
+            Quantity = itemQuantity,
+            ItemTotal = itemTotal,
+            NewSaleTotal = existingSale.TotalAmount,
+            CancelledAt = DateTime.UtcNow
+        };
+
+        await _eventBus.PublishAsync(itemCancelledEvent);
 
         _logger.LogInformation("Item cancelled successfully from sale {SaleNumber}, New Total: {TotalAmount}", 
             existingSale.SaleNumber, existingSale.TotalAmount);

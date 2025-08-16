@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
+using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using AutoMapper;
 
@@ -24,5 +25,15 @@ public class ProductProfile : Profile
 
         CreateMap<Rating, RatingResult>();
         CreateMap<RatingResult, RatingResponse>();
+
+        CreateMap<CreateProductRequest, CreateProductCommand>()
+            .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => new RatingCommand
+            {
+                Rate = (double)src.Rating.Rate,
+                Count = src.Rating.Count
+            }));
+
+        CreateMap<ProductRatingRequest, RatingCommand>()
+            .ForMember(dest => dest.Rate, opt => opt.MapFrom(src => (double)src.Rate));
     }
 }

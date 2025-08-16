@@ -15,6 +15,8 @@ public class SaleItem : BaseEntity
     public SaleItem()
     {
         Id = Guid.NewGuid();
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
     }
 
     public SaleItem(Guid saleId, Guid productId, string productDescription, int quantity, decimal unitPrice) : this()

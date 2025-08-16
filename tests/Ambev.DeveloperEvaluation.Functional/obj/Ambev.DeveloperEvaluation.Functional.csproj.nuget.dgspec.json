@@ -262,6 +262,86 @@
         }
       }
     },
+    "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.IoC/Ambev.DeveloperEvaluation.IoC.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.IoC/Ambev.DeveloperEvaluation.IoC.csproj",
+        "projectName": "Ambev.DeveloperEvaluation.IoC",
+        "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.IoC/Ambev.DeveloperEvaluation.IoC.csproj",
+        "packagesPath": "/Users/albuquerque/.nuget/packages/",
+        "outputPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.IoC/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/albuquerque/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Application/Ambev.DeveloperEvaluation.Application.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Application/Ambev.DeveloperEvaluation.Application.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Common/Ambev.DeveloperEvaluation.Common.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Common/Ambev.DeveloperEvaluation.Common.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Domain/Ambev.DeveloperEvaluation.Domain.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Domain/Ambev.DeveloperEvaluation.Domain.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[8.0.8, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.413/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
     "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -380,6 +460,95 @@
         }
       }
     },
+    "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj",
+        "projectName": "Ambev.DeveloperEvaluation.WebApi",
+        "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj",
+        "packagesPath": "/Users/albuquerque/.nuget/packages/",
+        "outputPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/albuquerque/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.IoC/Ambev.DeveloperEvaluation.IoC.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.IoC/Ambev.DeveloperEvaluation.IoC.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.4.1, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.10, )"
+            },
+            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+              "target": "Package",
+              "version": "[1.20.1, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.8.1, )"
+            },
+            "Swashbuckle.AspNetCore.Annotations": {
+              "target": "Package",
+              "version": "[6.8.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.413/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
     "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Functional/Ambev.DeveloperEvaluation.Functional.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -388,6 +557,230 @@
         "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Functional/Ambev.DeveloperEvaluation.Functional.csproj",
         "packagesPath": "/Users/albuquerque/.nuget/packages/",
         "outputPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Functional/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/albuquerque/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Application/Ambev.DeveloperEvaluation.Application.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Application/Ambev.DeveloperEvaluation.Application.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Domain/Ambev.DeveloperEvaluation.Domain.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Domain/Ambev.DeveloperEvaluation.Domain.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Bogus": {
+              "target": "Package",
+              "version": "[35.6.1, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Testing": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.11.1, )"
+            },
+            "NSubstitute": {
+              "target": "Package",
+              "version": "[5.1.0, )"
+            },
+            "coverlet.collector": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.9.2, )"
+            },
+            "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.8.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.413/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
+        "projectName": "Ambev.DeveloperEvaluation.Integration",
+        "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/Ambev.DeveloperEvaluation.Integration.csproj",
+        "packagesPath": "/Users/albuquerque/.nuget/packages/",
+        "outputPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Integration/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/albuquerque/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Application/Ambev.DeveloperEvaluation.Application.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Application/Ambev.DeveloperEvaluation.Application.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Domain/Ambev.DeveloperEvaluation.Domain.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.Domain/Ambev.DeveloperEvaluation.Domain.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.ORM/Ambev.DeveloperEvaluation.ORM.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/Ambev.DeveloperEvaluation.WebApi.csproj"
+              },
+              "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj": {
+                "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Bogus": {
+              "target": "Package",
+              "version": "[35.6.1, )"
+            },
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[6.12.1, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Testing": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.InMemory": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.11.1, )"
+            },
+            "NSubstitute": {
+              "target": "Package",
+              "version": "[5.1.0, )"
+            },
+            "coverlet.collector": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.9.2, )"
+            },
+            "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.8.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.413/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj",
+        "projectName": "Ambev.DeveloperEvaluation.Unit",
+        "projectPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/Ambev.DeveloperEvaluation.Unit.csproj",
+        "packagesPath": "/Users/albuquerque/.nuget/packages/",
+        "outputPath": "/Users/albuquerque/Documents/projetos/estudo/dotnet/abi-gth-omnia-developer-evaluation/template/backend/tests/Ambev.DeveloperEvaluation.Unit/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/albuquerque/.nuget/NuGet/NuGet.Config"
@@ -433,6 +826,10 @@
               "target": "Package",
               "version": "[35.6.1, )"
             },
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[6.12.0, )"
+            },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
               "version": "[17.11.1, )"
@@ -441,7 +838,23 @@
               "target": "Package",
               "version": "[5.1.0, )"
             },
+            "Roslynator.Analyzers": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[4.12.4, )"
+            },
+            "Roslynator.Testing.CSharp.Xunit": {
+              "target": "Package",
+              "version": "[4.12.4, )"
+            },
             "coverlet.collector": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "coverlet.msbuild": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",

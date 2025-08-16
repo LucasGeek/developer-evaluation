@@ -19,13 +19,10 @@ public class CreateSaleValidatorTests
         // Arrange
         var command = new CreateSaleCommand(
             BranchId: Guid.NewGuid(),
-            BranchDescription: "Test Branch",
             CustomerId: Guid.NewGuid(),
-            CustomerDescription: "Test Customer",
-            Date: DateTime.UtcNow,
             Items: new List<CreateSaleItemDto>
             {
-                new(Guid.NewGuid(), "Product 1", 5, 10.00m)
+                new(Guid.NewGuid(), 5)
             });
 
         // Act
@@ -35,19 +32,16 @@ public class CreateSaleValidatorTests
         result.ShouldNotHaveAnyValidationErrors();
     }
 
-    [Fact(DisplayName = "Empty BranchId should fail validation")]
+    [Fact(DisplayName = "Empty branch ID should fail validation")]
     public void Given_EmptyBranchId_When_Validated_Then_ShouldHaveError()
     {
         // Arrange
         var command = new CreateSaleCommand(
             BranchId: Guid.Empty,
-            BranchDescription: "Test Branch",
             CustomerId: Guid.NewGuid(),
-            CustomerDescription: "Test Customer",
-            Date: DateTime.UtcNow,
             Items: new List<CreateSaleItemDto>
             {
-                new(Guid.NewGuid(), "Product 1", 5, 10.00m)
+                new(Guid.NewGuid(), 5)
             });
 
         // Act
@@ -58,16 +52,33 @@ public class CreateSaleValidatorTests
             .WithErrorMessage("Branch ID is required");
     }
 
+    [Fact(DisplayName = "Empty customer ID should fail validation")]
+    public void Given_EmptyCustomerId_When_Validated_Then_ShouldHaveError()
+    {
+        // Arrange
+        var command = new CreateSaleCommand(
+            BranchId: Guid.NewGuid(),
+            CustomerId: Guid.Empty,
+            Items: new List<CreateSaleItemDto>
+            {
+                new(Guid.NewGuid(), 5)
+            });
+
+        // Act
+        var result = _validator.TestValidate(command);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.CustomerId)
+            .WithErrorMessage("Customer ID is required");
+    }
+
     [Fact(DisplayName = "Empty items list should fail validation")]
     public void Given_EmptyItemsList_When_Validated_Then_ShouldHaveError()
     {
         // Arrange
         var command = new CreateSaleCommand(
             BranchId: Guid.NewGuid(),
-            BranchDescription: "Test Branch",
             CustomerId: Guid.NewGuid(),
-            CustomerDescription: "Test Customer",
-            Date: DateTime.UtcNow,
             Items: new List<CreateSaleItemDto>());
 
         // Act
@@ -83,15 +94,12 @@ public class CreateSaleValidatorTests
     {
         // Arrange
         var items = Enumerable.Range(1, 21)
-            .Select(i => new CreateSaleItemDto(Guid.NewGuid(), $"Product {i}", 1, 10.00m))
+            .Select(i => new CreateSaleItemDto(Guid.NewGuid(), 1))
             .ToList();
 
         var command = new CreateSaleCommand(
             BranchId: Guid.NewGuid(),
-            BranchDescription: "Test Branch",
             CustomerId: Guid.NewGuid(),
-            CustomerDescription: "Test Customer",
-            Date: DateTime.UtcNow,
             Items: items);
 
         // Act
@@ -111,13 +119,10 @@ public class CreateSaleValidatorTests
         // Arrange
         var command = new CreateSaleCommand(
             BranchId: Guid.NewGuid(),
-            BranchDescription: "Test Branch",
             CustomerId: Guid.NewGuid(),
-            CustomerDescription: "Test Customer",
-            Date: DateTime.UtcNow,
             Items: new List<CreateSaleItemDto>
             {
-                new(Guid.NewGuid(), "Product 1", quantity, 10.00m)
+                new(Guid.NewGuid(), quantity)
             });
 
         // Act
@@ -127,53 +132,22 @@ public class CreateSaleValidatorTests
         result.ShouldHaveValidationErrorFor("Items[0].Quantity");
     }
 
-    [Theory(DisplayName = "Invalid unit prices should fail validation")]
-    [InlineData(0)]
-    [InlineData(-1)]
-    [InlineData(-10.50)]
-    public void Given_InvalidUnitPrice_When_Validated_Then_ShouldHaveError(decimal unitPrice)
+    [Fact(DisplayName = "Empty product ID should fail validation")]
+    public void Given_EmptyProductId_When_Validated_Then_ShouldHaveError()
     {
         // Arrange
         var command = new CreateSaleCommand(
             BranchId: Guid.NewGuid(),
-            BranchDescription: "Test Branch",
             CustomerId: Guid.NewGuid(),
-            CustomerDescription: "Test Customer",
-            Date: DateTime.UtcNow,
             Items: new List<CreateSaleItemDto>
             {
-                new(Guid.NewGuid(), "Product 1", 5, unitPrice)
+                new(Guid.Empty, 5)
             });
 
         // Act
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor("Items[0].UnitPrice");
-    }
-
-    [Fact(DisplayName = "Long descriptions should fail validation")]
-    public void Given_LongDescriptions_When_Validated_Then_ShouldHaveError()
-    {
-        // Arrange
-        var longDescription = new string('a', 256);
-        var command = new CreateSaleCommand(
-            BranchId: Guid.NewGuid(),
-            BranchDescription: longDescription,
-            CustomerId: Guid.NewGuid(),
-            CustomerDescription: longDescription,
-            Date: DateTime.UtcNow,
-            Items: new List<CreateSaleItemDto>
-            {
-                new(Guid.NewGuid(), longDescription, 5, 10.00m)
-            });
-
-        // Act
-        var result = _validator.TestValidate(command);
-
-        // Assert
-        result.ShouldHaveValidationErrorFor(x => x.BranchDescription);
-        result.ShouldHaveValidationErrorFor(x => x.CustomerDescription);
-        result.ShouldHaveValidationErrorFor("Items[0].ProductDescription");
+        result.ShouldHaveValidationErrorFor("Items[0].ProductId");
     }
 }

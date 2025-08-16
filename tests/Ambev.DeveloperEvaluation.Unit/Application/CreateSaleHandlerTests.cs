@@ -13,6 +13,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Application;
 public class CreateSaleHandlerTests
 {
     private readonly ISaleRepository _saleRepository;
+    private readonly IProductRepository _productRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IEventBus _eventBus;
     private readonly IMapper _mapper;
     private readonly ILogger<CreateSaleHandler> _logger;
@@ -21,29 +23,43 @@ public class CreateSaleHandlerTests
     public CreateSaleHandlerTests()
     {
         _saleRepository = Substitute.For<ISaleRepository>();
+        _productRepository = Substitute.For<IProductRepository>();
+        _userRepository = Substitute.For<IUserRepository>();
         _eventBus = Substitute.For<IEventBus>();
         _mapper = Substitute.For<IMapper>();
         _logger = Substitute.For<ILogger<CreateSaleHandler>>();
-        _handler = new CreateSaleHandler(_saleRepository, _eventBus, _mapper, _logger);
+        _handler = new CreateSaleHandler(_saleRepository, _productRepository, _userRepository, _eventBus, _mapper, _logger);
     }
 
     [Fact(DisplayName = "Handle should create sale with correct properties")]
     public async Task Handle_ValidCommand_ShouldCreateSaleWithCorrectProperties()
     {
         // Arrange
+        var branchId = Guid.NewGuid();
+        var customerId = Guid.NewGuid();
+        var productId1 = Guid.NewGuid();
+        var productId2 = Guid.NewGuid();
+        
         var command = new CreateSaleCommand(
-            BranchId: Guid.NewGuid(),
-            BranchDescription: "Test Branch",
-            CustomerId: Guid.NewGuid(),
-            CustomerDescription: "Test Customer",
-            Date: DateTime.UtcNow,
+            BranchId: branchId,
+            CustomerId: customerId,
             Items: new List<CreateSaleItemDto>
             {
-                new(Guid.NewGuid(), "Product 1", 5, 10.00m),
-                new(Guid.NewGuid(), "Product 2", 2, 15.00m)
+                new(productId1, 5),
+                new(productId2, 2)
             });
 
-        _saleRepository.GenerateNextSaleNumberAsync(command.BranchId)
+        // Setup customer
+        var customer = new User { Id = customerId, Username = "Test Customer" };
+        _userRepository.GetByIdAsync(customerId, Arg.Any<CancellationToken>()).Returns(customer);
+
+        // Setup products
+        var product1 = new Product("Product 1", 10.00m, "Description 1", "Category 1", "image1.jpg");
+        var product2 = new Product("Product 2", 15.00m, "Description 2", "Category 2", "image2.jpg");
+        _productRepository.GetByIdAsync(productId1, Arg.Any<CancellationToken>()).Returns(product1);
+        _productRepository.GetByIdAsync(productId2, Arg.Any<CancellationToken>()).Returns(product2);
+
+        _saleRepository.GenerateNextSaleNumberAsync(branchId)
             .Returns("BRANCH12345678-0001");
 
         // Act
@@ -59,17 +75,29 @@ public class CreateSaleHandlerTests
     public async Task Handle_ItemsWithDifferentQuantities_ShouldApplyDiscountRulesCorrectly()
     {
         // Arrange
+        var branchId = Guid.NewGuid();
+        var customerId = Guid.NewGuid();
+        var productId1 = Guid.NewGuid();
+        var productId2 = Guid.NewGuid();
+        
         var command = new CreateSaleCommand(
-            BranchId: Guid.NewGuid(),
-            BranchDescription: "Test Branch",
-            CustomerId: Guid.NewGuid(),
-            CustomerDescription: "Test Customer",
-            Date: DateTime.UtcNow,
+            BranchId: branchId,
+            CustomerId: customerId,
             Items: new List<CreateSaleItemDto>
             {
-                new(Guid.NewGuid(), "Product 1", 4, 10.00m), // 10% discount
-                new(Guid.NewGuid(), "Product 2", 10, 20.00m) // 20% discount
+                new(productId1, 4), // 10% discount
+                new(productId2, 10) // 20% discount
             });
+
+        // Setup customer
+        var customer = new User { Id = customerId, Username = "Test Customer" };
+        _userRepository.GetByIdAsync(customerId, Arg.Any<CancellationToken>()).Returns(customer);
+
+        // Setup products
+        var product1 = new Product("Product 1", 10.00m, "Description 1", "Category 1", "image1.jpg");
+        var product2 = new Product("Product 2", 20.00m, "Description 2", "Category 2", "image2.jpg");
+        _productRepository.GetByIdAsync(productId1, Arg.Any<CancellationToken>()).Returns(product1);
+        _productRepository.GetByIdAsync(productId2, Arg.Any<CancellationToken>()).Returns(product2);
 
         _saleRepository.GenerateNextSaleNumberAsync(command.BranchId)
             .Returns("BRANCH12345678-0001");
@@ -107,16 +135,24 @@ public class CreateSaleHandlerTests
     {
         // Arrange
         var branchId = Guid.NewGuid();
+        var customerId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        
         var command = new CreateSaleCommand(
             BranchId: branchId,
-            BranchDescription: "Test Branch",
-            CustomerId: Guid.NewGuid(),
-            CustomerDescription: "Test Customer",
-            Date: DateTime.UtcNow,
+            CustomerId: customerId,
             Items: new List<CreateSaleItemDto>
             {
-                new(Guid.NewGuid(), "Product 1", 1, 10.00m)
+                new(productId, 1)
             });
+
+        // Setup customer
+        var customer = new User { Id = customerId, Username = "Test Customer" };
+        _userRepository.GetByIdAsync(customerId, Arg.Any<CancellationToken>()).Returns(customer);
+
+        // Setup product
+        var product = new Product("Product 1", 10.00m, "Description 1", "Category 1", "image1.jpg");
+        _productRepository.GetByIdAsync(productId, Arg.Any<CancellationToken>()).Returns(product);
 
         var expectedSaleNumber = $"BRANCH{branchId.ToString("N").Substring(0, 8).ToUpper()}-0001";
         _saleRepository.GenerateNextSaleNumberAsync(branchId).Returns(expectedSaleNumber);
@@ -137,16 +173,25 @@ public class CreateSaleHandlerTests
     public async Task Handle_ValidCommand_ShouldLogCreationEvents()
     {
         // Arrange
+        var branchId = Guid.NewGuid();
+        var customerId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        
         var command = new CreateSaleCommand(
-            BranchId: Guid.NewGuid(),
-            BranchDescription: "Test Branch",
-            CustomerId: Guid.NewGuid(),
-            CustomerDescription: "Test Customer",
-            Date: DateTime.UtcNow,
+            BranchId: branchId,
+            CustomerId: customerId,
             Items: new List<CreateSaleItemDto>
             {
-                new(Guid.NewGuid(), "Product 1", 1, 10.00m)
+                new(productId, 1)
             });
+
+        // Setup customer
+        var customer = new User { Id = customerId, Username = "Test Customer" };
+        _userRepository.GetByIdAsync(customerId, Arg.Any<CancellationToken>()).Returns(customer);
+
+        // Setup product
+        var product = new Product("Product 1", 10.00m, "Description 1", "Category 1", "image1.jpg");
+        _productRepository.GetByIdAsync(productId, Arg.Any<CancellationToken>()).Returns(product);
 
         _saleRepository.GenerateNextSaleNumberAsync(command.BranchId)
             .Returns("BRANCH12345678-0001");

@@ -1,4 +1,6 @@
+using Ambev.DeveloperEvaluation.Domain.Events;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Messaging;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -8,15 +10,18 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
 public class CancelSaleHandler : IRequestHandler<CancelSaleCommand, CancelSaleResult>
 {
     private readonly ISaleRepository _saleRepository;
+    private readonly IEventBus _eventBus;
     private readonly IMapper _mapper;
     private readonly ILogger<CancelSaleHandler> _logger;
 
     public CancelSaleHandler(
         ISaleRepository saleRepository,
+        IEventBus eventBus,
         IMapper mapper,
         ILogger<CancelSaleHandler> logger)
     {
         _saleRepository = saleRepository;
+        _eventBus = eventBus;
         _mapper = mapper;
         _logger = logger;
     }
@@ -52,6 +57,19 @@ public class CancelSaleHandler : IRequestHandler<CancelSaleCommand, CancelSaleRe
 
         // Update in repository
         await _saleRepository.UpdateAsync(existingSale);
+
+        // Publish SaleCancelledEvent
+        var saleCancelledEvent = new SaleCancelledEvent
+        {
+            SaleId = existingSale.Id,
+            SaleNumber = existingSale.SaleNumber,
+            TotalAmount = existingSale.TotalAmount,
+            CancelledAt = existingSale.CancelledAt ?? DateTime.UtcNow,
+            CancellationReason = "Sale cancelled by user",
+            ItemCount = existingSale.Items.Count
+        };
+
+        await _eventBus.PublishAsync(saleCancelledEvent);
 
         _logger.LogInformation("Sale cancelled successfully: {SaleNumber} at {CancelledAt}", 
             existingSale.SaleNumber, existingSale.CancelledAt);

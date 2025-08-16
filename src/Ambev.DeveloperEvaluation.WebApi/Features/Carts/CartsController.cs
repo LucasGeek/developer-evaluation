@@ -1,6 +1,8 @@
 using Ambev.DeveloperEvaluation.Application.Carts.CreateCart;
 using Ambev.DeveloperEvaluation.Application.Carts.GetCart;
 using Ambev.DeveloperEvaluation.Application.Carts.ListCarts;
+using Ambev.DeveloperEvaluation.Application.Carts.UpdateCart;
+using Ambev.DeveloperEvaluation.Application.Carts.DeleteCart;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using AutoMapper;
 using MediatR;
@@ -11,6 +13,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Carts;
 
 [ApiController]
 [Route("api/[controller]")]
+[Tags("Carts")]
 [Authorize]
 public class CartsController : BaseController
 {
@@ -26,52 +29,40 @@ public class CartsController : BaseController
     /// <summary>
     /// Get all carts with pagination and filtering
     /// </summary>
-    /// <param name="limit">Number of carts per page (default: 20)</param>
-    /// <param name="sort">Sort field (date, date-desc, userid, userid-desc)</param>
-    /// <param name="page">Page number (default: 1)</param>
-    /// <param name="startdate">Start date filter (yyyy-mm-dd)</param>
-    /// <param name="enddate">End date filter (yyyy-mm-dd)</param>
+    /// <param name="_size">Number of carts per page (default: 10)</param>
+    /// <param name="_order">Ordering of results (e.g., "id desc, userId asc")</param>
+    /// <param name="_page">Page number (default: 1)</param>
     /// <returns>Paginated list of carts</returns>
     [HttpGet]
     [Authorize(Roles = "Manager,Admin")]
-    [ProducesResponseType(typeof(ApiResponseWithData<CartListResponse>), 200)]
+    [ProducesResponseType(typeof(CartListResponse), 200)]
     [ProducesResponseType(typeof(ApiResponse), 400)]
     public async Task<IActionResult> GetCarts(
-        [FromQuery] int limit = 20,
-        [FromQuery] string? sort = null,
-        [FromQuery] int page = 1,
-        [FromQuery] DateTime? startdate = null,
-        [FromQuery] DateTime? enddate = null)
+        [FromQuery] int _size = 10,
+        [FromQuery] string? _order = null,
+        [FromQuery] int _page = 1)
     {
-        if (limit > 100) limit = 100;
-        if (page < 1) page = 1;
+        if (_size > 100) _size = 100;
+        if (_page < 1) _page = 1;
 
         var query = new ListCartsQuery
         {
-            Page = page,
-            Limit = limit,
-            Sort = sort,
-            StartDate = startdate,
-            EndDate = enddate
+            Page = _page,
+            Limit = _size,
+            Sort = _order
         };
 
         var result = await _mediator.Send(query);
 
         var response = new CartListResponse
         {
-            Carts = result.Carts.Select(c => _mapper.Map<CartResponse>(c)).ToList(),
-            Page = result.Page,
-            Limit = result.PageSize,
-            Total = result.TotalCount,
-            Pages = result.TotalPages
+            Data = result.Carts.Select(c => _mapper.Map<CartResponse>(c)).ToList(),
+            CurrentPage = result.Page,
+            TotalItems = result.TotalCount,
+            TotalPages = result.TotalPages
         };
 
-        return Ok(new ApiResponseWithData<CartListResponse>
-        {
-            Success = true,
-            Message = "Carts retrieved successfully",
-            Data = response
-        });
+        return Ok(response);
     }
 
     /// <summary>
@@ -79,8 +70,8 @@ public class CartsController : BaseController
     /// </summary>
     /// <param name="id">Cart ID</param>
     /// <returns>Cart details</returns>
-    [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(ApiResponseWithData<CartResponse>), 200)]
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(CartResponse), 200)]
     [ProducesResponseType(typeof(ApiResponse), 404)]
     public async Task<IActionResult> GetCart(Guid id)
     {
@@ -97,13 +88,7 @@ public class CartsController : BaseController
         }
 
         var response = _mapper.Map<CartResponse>(result);
-
-        return Ok(new ApiResponseWithData<CartResponse>
-        {
-            Success = true,
-            Message = "Cart retrieved successfully",
-            Data = response
-        });
+        return Ok(response);
     }
 
     /// <summary>
@@ -113,7 +98,7 @@ public class CartsController : BaseController
     /// <returns>Created cart ID</returns>
     [HttpPost]
     [Authorize(Roles = "Customer,Manager,Admin")]
-    [ProducesResponseType(typeof(ApiResponseWithData<CreateCartResponse>), 201)]
+    [ProducesResponseType(typeof(CartResponse), 201)]
     [ProducesResponseType(typeof(ApiResponse), 400)]
     public async Task<IActionResult> CreateCart([FromBody] CreateCartRequest request)
     {
@@ -122,15 +107,19 @@ public class CartsController : BaseController
             var command = _mapper.Map<CreateCartCommand>(request);
             var cartId = await _mediator.Send(command);
 
-            var response = new CreateCartResponse { Id = cartId };
+            var cartResponse = new CartResponse 
+            { 
+                Id = cartId,
+                UserId = request.UserId,
+                Date = request.Date,
+                Products = request.Products?.Select(p => new CartItemResponse 
+                { 
+                    ProductId = p.ProductId, 
+                    Quantity = p.Quantity 
+                }).ToList() ?? new List<CartItemResponse>()
+            };
 
-            return Created($"/api/carts/{cartId}",
-                new ApiResponseWithData<CreateCartResponse>
-                {
-                    Success = true,
-                    Message = "Cart created successfully",
-                    Data = response
-                });
+            return Created($"/api/carts/{cartResponse.Id}", cartResponse);
         }
         catch (InvalidOperationException ex)
         {
@@ -148,34 +137,59 @@ public class CartsController : BaseController
     /// <param name="id">Cart ID</param>
     /// <param name="request">Updated cart data</param>
     /// <returns>Updated cart information</returns>
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id}")]
     [Authorize(Roles = "Customer,Manager,Admin")]
-    [ProducesResponseType(typeof(ApiResponseWithData<CartResponse>), 200)]
+    [ProducesResponseType(typeof(CartResponse), 200)]
     [ProducesResponseType(typeof(ApiResponse), 400)]
     [ProducesResponseType(typeof(ApiResponse), 404)]
     public async Task<IActionResult> UpdateCart(Guid id, [FromBody] CreateCartRequest request)
     {
-        // Implementation would go here - creating an UpdateCartCommand
-        // For now, return a placeholder response
         try
         {
-            var cartResponse = new CartResponse
+            var command = new UpdateCartCommand
             {
                 Id = id,
                 UserId = request.UserId,
-                Date = DateTime.UtcNow,
-                Products = request.Products?.Select(p => new CartItemResponse 
+                Products = request.Products?.Select(p => new Ambev.DeveloperEvaluation.Application.Carts.UpdateCart.CartItemRequest 
                 { 
                     ProductId = p.ProductId, 
                     Quantity = p.Quantity 
-                }).ToList() ?? new List<CartItemResponse>()
+                }).ToList() ?? new List<Ambev.DeveloperEvaluation.Application.Carts.UpdateCart.CartItemRequest>()
             };
 
-            return Ok(new ApiResponseWithData<CartResponse>
+            var success = await _mediator.Send(command);
+            
+            if (!success)
             {
-                Success = true,
-                Message = "Cart updated successfully",
-                Data = cartResponse
+                return NotFound(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Cart not found"
+                });
+            }
+
+            // Get updated cart to return in response
+            var getCartQuery = new GetCartQuery(id);
+            var updatedCart = await _mediator.Send(getCartQuery);
+            
+            if (updatedCart == null)
+            {
+                return NotFound(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Cart not found after update"
+                });
+            }
+
+            var cartResponse = _mapper.Map<CartResponse>(updatedCart);
+            return Ok(cartResponse);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new ApiResponse
+            {
+                Success = false,
+                Message = ex.Message
             });
         }
         catch (Exception ex)
@@ -193,18 +207,55 @@ public class CartsController : BaseController
     /// </summary>
     /// <param name="id">Cart ID</param>
     /// <returns>Success message</returns>
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id}")]
     [Authorize(Roles = "Customer,Manager,Admin")]
-    [ProducesResponseType(typeof(ApiResponse), 200)]
+    [ProducesResponseType(200)]
     [ProducesResponseType(typeof(ApiResponse), 404)]
     public async Task<IActionResult> DeleteCart(Guid id)
     {
-        // Implementation would go here - creating a DeleteCartCommand
-        // For now, return a placeholder response
-        return Ok(new ApiResponse
+        try
         {
-            Success = true,
-            Message = "Cart deletion functionality not yet implemented"
-        });
+            // For this implementation, we need to get the user ID from the current user context
+            // In a real application, this would come from the JWT token or current user context
+            var userIdClaim = User.FindFirst("nameid")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Unable to identify user"
+                });
+            }
+
+            var command = new DeleteCartCommand(id, userId);
+            var success = await _mediator.Send(command);
+            
+            if (!success)
+            {
+                return NotFound(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Cart not found"
+                });
+            }
+
+            return Ok(new { message = "Cart deleted successfully" });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new ApiResponse
+            {
+                Success = false,
+                Message = ex.Message
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ApiResponse
+            {
+                Success = false,
+                Message = ex.Message
+            });
+        }
     }
 }

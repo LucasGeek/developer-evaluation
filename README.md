@@ -264,7 +264,7 @@ dotnet ef database drop -p src/Ambev.DeveloperEvaluation.ORM -s src/Ambev.Develo
 
 ## 🌱 Seed Data
 
-The application includes a comprehensive **seed data system** that automatically populates the database with realistic test data on startup in the **development environment**.
+The application includes a comprehensive **seed data system** that populates the database with realistic test data. **Seeding is now executed manually** as a separate command to keep the application startup clean and fast.
 
 ### 🎯 What Gets Seeded
 
@@ -300,35 +300,47 @@ Each product includes:
 - 15% of sales randomly cancelled for testing
 - Varied quantities to test all discount rules
 
-### 🔧 Seed Configuration
+### 🔧 Running Seed Data
 
-The seeding system is **automatically configured** and runs on application startup:
+**Execute seeding manually** using the dedicated command:
 
-```csharp
-// Program.cs - Automatic seeding in development
-if (app.Environment.IsDevelopment())
-{
-    await SeedDataAsync(app);
-}
+```bash
+# Run seeding command (executes once and exits)
+dotnet run --project src/Ambev.DeveloperEvaluation.WebApi --seed
+
+# OR from the WebApi directory
+cd src/Ambev.DeveloperEvaluation.WebApi
+dotnet run --seed
 ```
+
+**Note**: The `--seed` command will populate the database and then exit. This keeps the regular `dotnet run` command clean and fast.
 
 #### Manual Seed Operations
 
 ```bash
+# 1. Apply database migrations first
+dotnet ef database update -p src/Ambev.DeveloperEvaluation.ORM -s src/Ambev.DeveloperEvaluation.WebApi
+
+# 2. Run seeding
+dotnet run --project src/Ambev.DeveloperEvaluation.WebApi --seed
+
+# 3. Start the application normally
+dotnet run --project src/Ambev.DeveloperEvaluation.WebApi
+
 # Force re-seed (drops and recreates data)
-# Stop the application and run:
 dotnet ef database drop -f -p src/Ambev.DeveloperEvaluation.ORM -s src/Ambev.DeveloperEvaluation.WebApi
 dotnet ef database update -p src/Ambev.DeveloperEvaluation.ORM -s src/Ambev.DeveloperEvaluation.WebApi
-dotnet run --project src/Ambev.DeveloperEvaluation.WebApi
+dotnet run --project src/Ambev.DeveloperEvaluation.WebApi --seed
 ```
 
 #### Seed Data Features
 
+- **Manual Execution**: Run only when needed, keeping application startup fast
 - **Idempotent**: Won't create duplicates if data already exists
 - **Realistic**: Uses actual Ambev product names and realistic data
 - **Business Logic**: Applies all discount rules and validation
 - **Comprehensive Logging**: Detailed logs for troubleshooting
-- **Error Handling**: Graceful failure without breaking startup
+- **Error Handling**: Graceful failure without breaking the application
 
 ### 🎨 Using Seed Data
 

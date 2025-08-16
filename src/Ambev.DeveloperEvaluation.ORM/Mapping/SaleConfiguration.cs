@@ -50,7 +50,9 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
             .IsRequired();
             
         builder.Property(s => s.RowVersion)
-            .IsRowVersion();
+            .IsRequired(false)
+            .ValueGeneratedOnAddOrUpdate()
+            .IsConcurrencyToken();
 
         builder.HasIndex(s => new { s.SaleNumber, s.BranchId })
             .IsUnique()
