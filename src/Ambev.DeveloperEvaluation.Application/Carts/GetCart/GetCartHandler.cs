@@ -47,7 +47,6 @@ public class GetCartHandler : IQueryHandler<GetCartQuery, GetCartResult?>
 
         var result = _mapper.Map<GetCartResult>(cart);
 
-        // Cache for 15 minutes (carts change frequently)
         await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(15));
 
         _logger.LogInformation("Cart {CartId} retrieved successfully with {ProductCount} products", 

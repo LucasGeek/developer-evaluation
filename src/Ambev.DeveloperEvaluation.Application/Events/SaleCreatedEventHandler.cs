@@ -33,7 +33,6 @@ public class SaleCreatedEventHandler : INotificationHandler<SaleCreatedEvent>
         {
             _logger.LogInformation("Processing SaleCreatedEvent for Sale ID: {SaleId}", notification.SaleId);
 
-            // Get the full sale entity from PostgreSQL
             var sale = await _saleRepository.GetByIdAsync(notification.SaleId);
             if (sale == null)
             {
@@ -41,10 +40,8 @@ public class SaleCreatedEventHandler : INotificationHandler<SaleCreatedEvent>
                 return;
             }
 
-            // Map to read model
             var saleReadModel = _mapper.Map<SaleReadModel>(sale);
 
-            // Save to MongoDB for read operations
             await _saleReadModelRepository.CreateAsync(saleReadModel, cancellationToken);
 
             _logger.LogInformation("Sale read model created successfully for Sale ID: {SaleId}", notification.SaleId);
@@ -52,8 +49,6 @@ public class SaleCreatedEventHandler : INotificationHandler<SaleCreatedEvent>
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing SaleCreatedEvent for Sale ID: {SaleId}", notification.SaleId);
-            // Don't throw to prevent MongoDB connection issues from breaking the sales flow
-            // In production, this would be properly configured with MongoDB available
             _logger.LogWarning("Continuing execution despite read model creation failure");
         }
     }

@@ -47,7 +47,6 @@ public class GetProductHandler : IQueryHandler<GetProductQuery, GetProductResult
 
         var result = _mapper.Map<GetProductResult>(product);
         
-        // Cache for 30 minutes
         await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(30));
         
         _logger.LogInformation("Product {ProductId} retrieved successfully", request.Id);

@@ -9,7 +9,7 @@ public record UpdateSaleCommand(
 ) : IRequest<UpdateSaleResult>;
 
 public record UpdateSaleItemDto(
-    Guid? Id, // null for new items
+    Guid? Id,
     Guid ProductId,
     int Quantity
 );

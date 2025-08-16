@@ -13,6 +13,7 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Guid>
     private readonly ISaleRepository _saleRepository;
     private readonly IProductRepository _productRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IBranchRepository _branchRepository;
     private readonly IEventBus _eventBus;
     private readonly IMapper _mapper;
     private readonly ILogger<CreateSaleHandler> _logger;
@@ -21,6 +22,7 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Guid>
         ISaleRepository saleRepository,
         IProductRepository productRepository,
         IUserRepository userRepository,
+        IBranchRepository branchRepository,
         IEventBus eventBus,
         IMapper mapper,
         ILogger<CreateSaleHandler> logger)
@@ -28,6 +30,7 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Guid>
         _saleRepository = saleRepository;
         _productRepository = productRepository;
         _userRepository = userRepository;
+        _branchRepository = branchRepository;
         _eventBus = eventBus;
         _mapper = mapper;
         _logger = logger;
@@ -41,36 +44,36 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Guid>
             "Creating sale for Branch {BranchId}, Customer {CustomerId}, CorrelationId: {CorrelationId}",
             request.BranchId, request.CustomerId, correlationId);
 
-        // Validate customer exists
         var customer = await _userRepository.GetByIdAsync(request.CustomerId, cancellationToken);
         if (customer == null)
         {
             throw new ArgumentException($"Customer with ID {request.CustomerId} not found");
         }
 
-        // Generate sale number
+        var branch = await _branchRepository.GetByIdAsync(request.BranchId, cancellationToken);
+        if (branch == null)
+        {
+            throw new ArgumentException($"Branch with ID {request.BranchId} not found");
+        }
+
         var saleNumber = await _saleRepository.GenerateNextSaleNumberAsync(request.BranchId);
 
-        // Create sale entity with customer description from database
         var sale = new Sale(
             saleNumber,
             DateTime.UtcNow,
             request.CustomerId,
-            customer.Username, // Use actual customer name from database
+            customer.Username,
             request.BranchId,
-            "Main Branch"); // This should come from a Branch repository in a real app
+            branch.Name);
 
-        // Process each item with validation and business rules
         foreach (var itemDto in request.Items)
         {
-            // Validate product exists and get current price
             var product = await _productRepository.GetByIdAsync(itemDto.ProductId, cancellationToken);
             if (product == null)
             {
                 throw new ArgumentException($"Product with ID {itemDto.ProductId} not found");
             }
 
-            // Apply business rules for quantity
             if (itemDto.Quantity <= 0)
             {
                 throw new ArgumentException("Quantity must be greater than 0");
@@ -81,15 +84,13 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Guid>
                 throw new ArgumentException("Cannot sell more than 20 identical items");
             }
 
-            // Create sale item with actual product data
             var item = new SaleItem(
                 sale.Id,
                 itemDto.ProductId,
-                product.Title, // Use actual product title from database
+                product.Title,
                 itemDto.Quantity,
-                product.Price); // Use actual product price from database
+                product.Price);
 
-            // Apply discount based on business rules (handled by the entity)
             item.ApplyDiscount();
             
             if (item.Discount > 0)
@@ -103,10 +104,8 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, Guid>
             sale.AddItem(item);
         }
 
-        // Persist to database
         await _saleRepository.CreateAsync(sale);
 
-        // Publish SaleCreated event
         var saleCreatedEvent = new SaleCreatedEvent
         {
             SaleId = sale.Id,

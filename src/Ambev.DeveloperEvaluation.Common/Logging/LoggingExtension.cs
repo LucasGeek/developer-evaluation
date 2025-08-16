@@ -13,8 +13,6 @@ using System.Diagnostics;
 
 namespace Ambev.DeveloperEvaluation.Common.Logging;
 
-
-
 /// <summary> Add default Logging configuration to project. This configuration supports Serilog logs with DataDog compatible output.</summary>
 public static class LoggingExtension
 {

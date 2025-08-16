@@ -66,7 +66,6 @@ public class ListCartsHandler : IQueryHandler<ListCartsQuery, ListCartsResult>
             PageSize = request.Limit
         };
 
-        // Cache for 5 minutes (carts change frequently)
         await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
 
         _logger.LogInformation("Retrieved {CartCount} carts from {TotalCount} total carts", 

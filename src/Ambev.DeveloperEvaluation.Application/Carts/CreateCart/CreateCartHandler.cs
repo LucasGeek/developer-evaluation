@@ -27,7 +27,6 @@ public class CreateCartHandler : ICommandHandler<CreateCartCommand, Guid>
         _logger.LogInformation("Creating cart for user {UserId} with {ProductCount} products", 
             request.UserId, request.Products.Count);
 
-        // Check if user already has a cart
         var existingCart = await _cartRepository.GetByUserIdAsync(request.UserId, cancellationToken);
         if (existingCart != null)
         {
@@ -45,7 +44,6 @@ public class CreateCartHandler : ICommandHandler<CreateCartCommand, Guid>
 
         await _cartRepository.CreateAsync(cart, cancellationToken);
 
-        // Publish domain event
         var cartCreatedEvent = new
         {
             CartId = cart.Id,

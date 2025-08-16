@@ -33,13 +33,6 @@ public class ItemCancelledEventHandler : INotificationHandler<ItemCancelledEvent
                 notification.NewSaleTotal,
                 notification.CancelledAt);
 
-            // Here you could implement additional business logic such as:
-            // - Update product inventory (return the cancelled quantity to stock)
-            // - Send notifications about partial order cancellation
-            // - Update customer loyalty points or refunds
-            // - Trigger partial refund processes
-            // - Update analytics for product cancellation patterns
-            // - Update read models for reporting
 
             _logger.LogInformation(
                 "Item cancellation event processed successfully for Item {ItemId} in Sale {SaleNumber}", 
@@ -52,7 +45,6 @@ public class ItemCancelledEventHandler : INotificationHandler<ItemCancelledEvent
                 "Error processing ItemCancelledEvent for Item {ItemId} in Sale ID: {SaleId}", 
                 notification.ItemId, 
                 notification.SaleId);
-            // Consider retrying logic or dead letter queue for critical business processes
         }
 
         await Task.CompletedTask;

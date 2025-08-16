@@ -30,7 +30,6 @@ public class CancelSaleHandler : IRequestHandler<CancelSaleCommand, CancelSaleRe
     {
         _logger.LogInformation("Cancelling sale with ID: {SaleId}", request.Id);
 
-        // Get existing sale
         var existingSale = await _saleRepository.GetByIdAsync(request.Id);
         if (existingSale == null)
         {
@@ -52,13 +51,10 @@ public class CancelSaleHandler : IRequestHandler<CancelSaleCommand, CancelSaleRe
 
         _logger.LogInformation("Cancelling sale: {SaleNumber}", existingSale.SaleNumber);
 
-        // Cancel the sale using domain method
         existingSale.Cancel();
 
-        // Update in repository
         await _saleRepository.UpdateAsync(existingSale);
 
-        // Publish SaleCancelledEvent
         var saleCancelledEvent = new SaleCancelledEvent
         {
             SaleId = existingSale.Id,
@@ -74,8 +70,7 @@ public class CancelSaleHandler : IRequestHandler<CancelSaleCommand, CancelSaleRe
         _logger.LogInformation("Sale cancelled successfully: {SaleNumber} at {CancelledAt}", 
             existingSale.SaleNumber, existingSale.CancelledAt);
 
-        // Map to result
-        var result = new CancelSaleResult
+       var result = new CancelSaleResult
         {
             Id = existingSale.Id,
             SaleNumber = existingSale.SaleNumber,

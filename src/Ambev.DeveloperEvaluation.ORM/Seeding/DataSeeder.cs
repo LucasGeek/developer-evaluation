@@ -145,7 +145,6 @@ public class DataSeeder : IDataSeeder
 
         await _context.Products.AddRangeAsync(products);
         
-        // Update ratings for better demo data
         var random = new Random();
         foreach (var product in products)
         {
@@ -183,7 +182,6 @@ public class DataSeeder : IDataSeeder
         {
             var cart = new Cart(user.Id);
             
-            // Add 2-5 random products to each cart
             var cartProducts = products.OrderBy(x => random.Next()).Take(random.Next(2, 6)).ToList();
             foreach (var product in cartProducts)
             {
@@ -241,11 +239,10 @@ public class DataSeeder : IDataSeeder
                 branch.Description
             );
 
-            // Add 1-4 products to each sale
             var saleProducts = products.OrderBy(x => random.Next()).Take(random.Next(1, 5)).ToList();
             foreach (var product in saleProducts)
             {
-                var quantity = random.Next(1, 15); // Varied quantities to test discount rules
+                var quantity = random.Next(1, 15); 
                 var saleItem = new SaleItem(
                     sale.Id,
                     product.Id,
@@ -254,13 +251,11 @@ public class DataSeeder : IDataSeeder
                     product.Price
                 );
                 
-                // Apply discount business rules
                 saleItem.ApplyDiscount();
                 sale.AddItem(saleItem);
             }
 
-            // Randomly cancel some sales
-            if (random.NextDouble() < 0.15) // 15% chance of cancellation
+            if (random.NextDouble() < 0.15)
             {
                 sale.Cancel();
             }

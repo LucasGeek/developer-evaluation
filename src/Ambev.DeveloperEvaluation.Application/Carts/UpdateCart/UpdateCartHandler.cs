@@ -40,7 +40,6 @@ public class UpdateCartHandler : ICommandHandler<UpdateCartCommand, bool>
             throw new InvalidOperationException("User cannot update cart belonging to another user");
         }
 
-        // Clear existing products and add new ones
         cart.Clear();
         
         foreach (var productRequest in request.Products)
@@ -50,7 +49,6 @@ public class UpdateCartHandler : ICommandHandler<UpdateCartCommand, bool>
 
         await _cartRepository.UpdateAsync(cart, cancellationToken);
 
-        // Publish domain event
         var cartUpdatedEvent = new
         {
             CartId = cart.Id,

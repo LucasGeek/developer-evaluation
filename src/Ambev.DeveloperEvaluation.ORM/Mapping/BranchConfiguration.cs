@@ -56,7 +56,7 @@ public class BranchConfiguration : IEntityTypeConfiguration<Branch>
             .IsRequired();
 
         builder.Property(b => b.UpdatedAt)
-            .IsRequired(false);
+            .IsRequired();
 
         // Indexes
         builder.HasIndex(b => b.Name)

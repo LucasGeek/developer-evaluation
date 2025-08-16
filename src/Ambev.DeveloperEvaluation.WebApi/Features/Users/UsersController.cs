@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Ambev.DeveloperEvaluation.WebApi.Common;
@@ -108,37 +108,22 @@ public class UsersController : BaseController
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
     {
-        var validator = new CreateUserRequestValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
-
-        if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
-
-        // For demo purposes, create a sample user response
-        var userResponse = new GetUserResponse
+        var command = new Application.Users.CreateUser.CreateUserCommand(
+            Username: request.Username,
+            Email: request.Email,
+            Phone: request.Phone,
+            Role: request.Role,
+            Status: request.Status
+        )
         {
-            Id = Guid.NewGuid(),
-            Email = request.Email,
-            Username = request.Username,
-            Password = "*****", // Masked password
-            Name = new UserName 
-            { 
-                Firstname = request.Username.Split(' ').FirstOrDefault() ?? "",
-                Lastname = request.Username.Split(' ').LastOrDefault() ?? ""
-            },
-            Address = new UserAddress
-            {
-                City = "Default City",
-                Street = "Default Street",
-                Number = 123,
-                Zipcode = "12345",
-                Geolocation = new Geolocation { Lat = "0", Long = "0" }
-            },
-            Phone = request.Phone,
-            Status = "Active",
-            Role = request.Role.ToString()
+            Password = request.Password
         };
 
+        var result = await _mediator.Send(command, cancellationToken);
+        var getUserQuery = new Application.Users.GetUser.GetUserQuery { Id = result };
+        var user = await _mediator.Send(getUserQuery, cancellationToken);
+        
+        var userResponse = _mapper.Map<GetUserResponse>(user);
         return Created($"/api/users/{userResponse.Id}", userResponse);
     }
 

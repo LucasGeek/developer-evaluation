@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
+using Ambev.DeveloperEvaluation.WebApi;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Integration;
@@ -40,7 +41,7 @@ public class SalesFlowIntegrationTests : IClassFixture<WebApplicationFactory<Pro
         
         // 1. Create Branch
         var createBranchCommand = new CreateBranchCommand(
-            "Main Branch",
+            "Main Branch " + Guid.NewGuid(),
             "Main branch for sales",
             "123 Main Street",
             "São Paulo", 
@@ -48,19 +49,21 @@ public class SalesFlowIntegrationTests : IClassFixture<WebApplicationFactory<Pro
             "01234-567",
             "(11) 99999-9999"
         );
-        var branchId = await _mediator.Send(createBranchCommand);
-        branchId.Should().NotBeEmpty("Branch should be created successfully");
+    var branchId = await _mediator.Send(createBranchCommand);
+    branchId.Should().NotBe(Guid.Empty, "Branch should be created successfully");
 
         // 2. Create User (Customer)
+        var uniqueEmail = $"john{Guid.NewGuid().ToString("N")[..8]}@example.com";
         var createUserCommand = new CreateUserCommand(
             "John Doe",
-            "john.doe@example.com",
-            "(11) 98765-4321",
+            uniqueEmail,
+            "+5511987654321",
             UserRole.Customer,
             UserStatus.Active
-        );
-        var customerId = await _mediator.Send(createUserCommand);
-        customerId.Should().NotBeEmpty("Customer should be created successfully");
+        ) { Password = "Test@123" };
+    var customerResult = await _mediator.Send(createUserCommand);
+    Guid customerId = ExtractUserId(customerResult);
+    customerId.Should().NotBe(Guid.Empty, "Customer should be created successfully");
 
         // 3. Create Products
         var createProduct1Command = new CreateProductCommand(
@@ -70,8 +73,9 @@ public class SalesFlowIntegrationTests : IClassFixture<WebApplicationFactory<Pro
             "Electronics",
             "https://example.com/samsung.jpg"
         );
-        var product1Id = await _mediator.Send(createProduct1Command);
-        product1Id.Should().NotBeEmpty("Product 1 should be created successfully");
+    var product1Result = await _mediator.Send(createProduct1Command);
+    Guid product1Id = ExtractProductId(product1Result);
+    product1Id.Should().NotBe(Guid.Empty, "Product 1 should be created successfully");
 
         var createProduct2Command = new CreateProductCommand(
             "iPhone 15 Pro",
@@ -80,8 +84,9 @@ public class SalesFlowIntegrationTests : IClassFixture<WebApplicationFactory<Pro
             "Electronics", 
             "https://example.com/iphone.jpg"
         );
-        var product2Id = await _mediator.Send(createProduct2Command);
-        product2Id.Should().NotBeEmpty("Product 2 should be created successfully");
+    var product2Result = await _mediator.Send(createProduct2Command);
+    Guid product2Id = ExtractProductId(product2Result);
+    product2Id.Should().NotBe(Guid.Empty, "Product 2 should be created successfully");
 
         // Act - Create Sale with business rules validation
         var createSaleCommand = new CreateSaleCommand(
@@ -96,8 +101,8 @@ public class SalesFlowIntegrationTests : IClassFixture<WebApplicationFactory<Pro
             }
         );
 
-        var saleId = await _mediator.Send(createSaleCommand);
-        saleId.Should().NotBeEmpty("Sale should be created successfully");
+    var saleId = await _mediator.Send(createSaleCommand);
+    saleId.Should().NotBe(Guid.Empty, "Sale should be created successfully");
 
         // Assert - Verify Sale contains all required information
         var getSaleQuery = new GetSaleQuery(saleId);
@@ -226,21 +231,42 @@ public class SalesFlowIntegrationTests : IClassFixture<WebApplicationFactory<Pro
     }
 
     // Helper methods for test setup
-    private async Task<Guid> CreateTestBranch()
+    async Task<Guid> CreateTestBranch()
     {
-        var command = new CreateBranchCommand("Test Branch", "Test", "123 Test St", "Test City", "TS", "12345", "555-0123");
-        return await _mediator.Send(command);
+        var command = new CreateBranchCommand("Test Branch " + Guid.NewGuid().ToString(), "Test", "123 Test St", "Test City", "TS", "12345", "(11) 99999-9999");
+    return await _mediator.Send(command);
     }
 
-    private async Task<Guid> CreateTestCustomer()
+    async Task<Guid> CreateTestCustomer()
     {
-        var command = new CreateUserCommand("Test Customer", "test@test.com", "555-0123", UserRole.Customer, UserStatus.Active);
-        return await _mediator.Send(command);
+    var uniqueEmail = $"test{Guid.NewGuid().ToString("N")[..8]}@test.com";
+    var command = new CreateUserCommand("Test Customer", uniqueEmail, "+5511999999999", UserRole.Customer, UserStatus.Active) { Password = "Test@123" };
+    var result = await _mediator.Send(command);
+    return ExtractUserId(result);
     }
 
-    private async Task<Guid> CreateTestProduct(string title, decimal price)
+    async Task<Guid> CreateTestProduct(string title, decimal price)
     {
         var command = new CreateProductCommand(title, price, "Test product", "Test", "test.jpg");
-        return await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+        return ExtractProductId(result);
+    }
+
+    private Guid ExtractUserId(object result)
+    {
+        if (result is Guid guid)
+            return guid;
+        if (result is CreateUserResult userResult)
+            return userResult.Id;
+        throw new InvalidOperationException("Unexpected result type for CreateUserCommand");
+    }
+
+    private Guid ExtractProductId(object result)
+    {
+        if (result is Guid guid)
+            return guid;
+        if (result is CreateProductResult productResult)
+            return productResult.Id;
+        throw new InvalidOperationException("Unexpected result type for CreateProductCommand");
     }
 }

@@ -23,28 +23,26 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Post_ValidSaleRequest_ShouldCreateSaleSuccessfully()
     {
         // Arrange
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId1 = await CreateTestProduct("Product 1", 100.00m);
+        var productId2 = await CreateTestProduct("Product 2", 50.00m);
+
         var request = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
-            BranchDescription = "Test Branch",
-            CustomerId = Guid.NewGuid(),
-            CustomerDescription = "Test Customer",
-            Date = DateTime.UtcNow,
+            BranchId = branchId,
+            CustomerId = customerId,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
-                    ProductDescription = "Product 1",
+                    ProductId = productId1,
                     Quantity = 5,
-                    UnitPrice = 10.00m
                 },
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
-                    ProductDescription = "Product 2",
+                    ProductId = productId2,
                     Quantity = 10,
-                    UnitPrice = 20.00m
                 }
             }
         };
@@ -94,25 +92,30 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Post_SaleWithDiscountEligibleItems_ShouldApplyDiscountsCorrectly()
     {
         // Arrange
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId1 = await CreateTestProduct("Product with 10% discount", 10.00m);
+        var productId2 = await CreateTestProduct("Product with 20% discount", 20.00m);
+
         var request = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Test Branch",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Test Customer",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId1,
                     ProductDescription = "Product with 10% discount",
                     Quantity = 4, // 10% discount
                     UnitPrice = 10.00m
                 },
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId2,
                     ProductDescription = "Product with 20% discount",
                     Quantity = 15, // 20% discount
                     UnitPrice = 20.00m
@@ -140,18 +143,22 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Post_ItemQuantityOver20_ShouldReturnBadRequest()
     {
         // Arrange
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId = await CreateTestProduct("Product 1", 10.00m);
+
         var request = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Test Branch",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Test Customer",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId,
                     ProductDescription = "Product 1",
                     Quantity = 21, // Invalid: over 20
                     UnitPrice = 10.00m
@@ -170,18 +177,22 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Get_ExistingSaleId_ShouldReturnSale()
     {
         // Arrange - First create a sale
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId = await CreateTestProduct("Product 1", 10.00m);
+
         var createRequest = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Test Branch",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Test Customer",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId,
                     ProductDescription = "Product 1",
                     Quantity = 5,
                     UnitPrice = 10.00m
@@ -245,25 +256,30 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Get_SaleWithDiscounts_ShouldReturnCorrectDiscounts()
     {
         // Arrange - Create sale with items that have discounts
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId1 = await CreateTestProduct("Product with 10% discount", 10.00m);
+        var productId2 = await CreateTestProduct("Product with 20% discount", 20.00m);
+
         var createRequest = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Test Branch",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Test Customer",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId1,
                     ProductDescription = "Product with 10% discount",
                     Quantity = 4, // 10% discount
                     UnitPrice = 10.00m
                 },
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId2,
                     ProductDescription = "Product with 20% discount",
                     Quantity = 10, // 20% discount
                     UnitPrice = 20.00m
@@ -314,18 +330,22 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
         var sales = new List<Guid>();
         for (int i = 0; i < 5; i++)
         {
+            var branchId = await CreateTestBranch();
+            var customerId = await CreateTestCustomer();
+            var productId = await CreateTestProduct($"Product {i}", 10.00m * (i + 1));
+
             var createRequest = new CreateSaleRequest
             {
-                BranchId = Guid.NewGuid(),
+                BranchId = branchId,
                 BranchDescription = $"Branch {i}",
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId,
                 CustomerDescription = $"Customer {i}",
                 Date = DateTime.UtcNow.AddDays(-i),
                 Items = new List<CreateSaleItemRequest>
                 {
                     new()
                     {
-                        ProductId = Guid.NewGuid(),
+                        ProductId = productId,
                         ProductDescription = $"Product {i}",
                         Quantity = i + 1,
                         UnitPrice = 10.00m * (i + 1)
@@ -366,8 +386,9 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Get_SalesListWithFilters_ShouldApplyFiltersCorrectly()
     {
         // Arrange - Create sales with specific attributes
-        var branchId = Guid.NewGuid();
-        var customerId = Guid.NewGuid();
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId = await CreateTestProduct("Filtered Product", 20.00m);
         
         var createRequest = new CreateSaleRequest
         {
@@ -380,7 +401,7 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId,
                     ProductDescription = "Filtered Product",
                     Quantity = 5,
                     UnitPrice = 20.00m
@@ -419,19 +440,23 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
         var sales = new List<(Guid Id, DateTime Date)>();
         for (int i = 0; i < 3; i++)
         {
+            var branchId = await CreateTestBranch();
+            var customerId = await CreateTestCustomer();
+            var productId = await CreateTestProduct($"Product {i}", 10.00m);
+
             var date = DateTime.UtcNow.AddDays(-i);
             var createRequest = new CreateSaleRequest
             {
-                BranchId = Guid.NewGuid(),
+                BranchId = branchId,
                 BranchDescription = $"Branch {i}",
-                CustomerId = Guid.NewGuid(),
+                CustomerId = customerId,
                 CustomerDescription = $"Customer {i}",
                 Date = date,
                 Items = new List<CreateSaleItemRequest>
                 {
                     new()
                     {
-                        ProductId = Guid.NewGuid(),
+                        ProductId = productId,
                         ProductDescription = $"Product {i}",
                         Quantity = 1,
                         UnitPrice = 10.00m
@@ -470,18 +495,22 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Put_ValidUpdateRequest_ShouldUpdateSaleSuccessfully()
     {
         // Arrange - First create a sale
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId = await CreateTestProduct("Original Product", 10.00m);
+
         var createRequest = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Original Branch",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Original Customer",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId,
                     ProductDescription = "Original Product",
                     Quantity = 2,
                     UnitPrice = 10.00m
@@ -495,6 +524,9 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
         var saleId = createJsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
 
         // Prepare update request
+        var updateProductId1 = await CreateTestProduct("Updated Product 1", 25.00m);
+        var updateProductId2 = await CreateTestProduct("Updated Product 2", 15.00m);
+
         var updateRequest = new UpdateSaleRequest
         {
             Date = DateTime.UtcNow.AddHours(-1),
@@ -504,14 +536,14 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = updateProductId1,
                     ProductDescription = "Updated Product 1",
                     Quantity = 4, // 10% discount applies
                     UnitPrice = 25.00m
                 },
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = updateProductId2,
                     ProductDescription = "Updated Product 2",
                     Quantity = 1,
                     UnitPrice = 15.00m
@@ -720,18 +752,22 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Put_ValidCancelRequest_ShouldCancelSaleSuccessfully()
     {
         // Arrange - First create a sale
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId = await CreateTestProduct("Product to Cancel", 10.00m);
+
         var createRequest = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Branch to Cancel",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Customer to Cancel",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId,
                     ProductDescription = "Product to Cancel",
                     Quantity = 1,
                     UnitPrice = 10.00m
@@ -785,18 +821,22 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Put_CancelAlreadyCancelledSale_ShouldReturnOk()
     {
         // Arrange - Create and cancel a sale
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId = await CreateTestProduct("Product", 10.00m);
+
         var createRequest = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Branch",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Customer",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId,
                     ProductDescription = "Product",
                     Quantity = 1,
                     UnitPrice = 10.00m
@@ -833,18 +873,22 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Put_UpdateCancelledSale_ShouldReturn400()
     {
         // Arrange - Create and cancel a sale
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId = await CreateTestProduct("Product", 10.00m);
+
         var createRequest = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Branch",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Customer",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId,
                     ProductDescription = "Product",
                     Quantity = 1,
                     UnitPrice = 10.00m
@@ -861,6 +905,8 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
         await _client.PutAsync($"/api/sales/{saleId}/cancel", null);
 
         // Try to update the cancelled sale
+        var updateProductId = await CreateTestProduct("Updated Product", 15.00m);
+
         var updateRequest = new UpdateSaleRequest
         {
             Date = DateTime.UtcNow,
@@ -870,7 +916,7 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = updateProductId,
                     ProductDescription = "Updated Product",
                     Quantity = 1,
                     UnitPrice = 15.00m
@@ -895,25 +941,30 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Delete_ValidCancelItemRequest_ShouldCancelItemSuccessfully()
     {
         // Arrange - Create a sale with multiple items
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId1 = await CreateTestProduct("Product 1", 10.00m);
+        var productId2 = await CreateTestProduct("Product 2", 15.00m);
+
         var createRequest = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Branch with Items",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Customer with Items",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId1,
                     ProductDescription = "Product 1",
                     Quantity = 2,
                     UnitPrice = 10.00m
                 },
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId2,
                     ProductDescription = "Product 2",
                     Quantity = 3,
                     UnitPrice = 15.00m
@@ -982,18 +1033,22 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Delete_CancelNonExistentItem_ShouldReturn404()
     {
         // Arrange - Create a sale
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId = await CreateTestProduct("Product", 10.00m);
+
         var createRequest = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Branch",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Customer",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId,
                     ProductDescription = "Product",
                     Quantity = 1,
                     UnitPrice = 10.00m
@@ -1025,18 +1080,22 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Delete_CancelLastItem_ShouldReturn400()
     {
         // Arrange - Create a sale with only one item
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId = await CreateTestProduct("Only Product", 10.00m);
+
         var createRequest = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Branch",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Customer",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId,
                     ProductDescription = "Only Product",
                     Quantity = 1,
                     UnitPrice = 10.00m
@@ -1073,25 +1132,30 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
     public async Task Delete_CancelItemFromCancelledSale_ShouldReturn400()
     {
         // Arrange - Create and cancel a sale
+        var branchId = await CreateTestBranch();
+        var customerId = await CreateTestCustomer();
+        var productId1 = await CreateTestProduct("Product 1", 10.00m);
+        var productId2 = await CreateTestProduct("Product 2", 15.00m);
+
         var createRequest = new CreateSaleRequest
         {
-            BranchId = Guid.NewGuid(),
+            BranchId = branchId,
             BranchDescription = "Branch",
-            CustomerId = Guid.NewGuid(),
+            CustomerId = customerId,
             CustomerDescription = "Customer",
             Date = DateTime.UtcNow,
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId1,
                     ProductDescription = "Product 1",
                     Quantity = 1,
                     UnitPrice = 10.00m
                 },
                 new()
                 {
-                    ProductId = Guid.NewGuid(),
+                    ProductId = productId2,
                     ProductDescription = "Product 2", 
                     Quantity = 1,
                     UnitPrice = 15.00m
@@ -1125,5 +1189,65 @@ public class SalesControllerIntegrationTests : IClassFixture<TestWebApplicationF
         
         jsonDocument.RootElement.GetProperty("success").GetBoolean().Should().BeFalse();
         jsonDocument.RootElement.GetProperty("message").GetString().Should().Contain("cancelled sale");
+    }
+
+    private async Task<Guid> CreateTestBranch()
+    {
+        var request = new
+        {
+            Name = $"Test Branch {Guid.NewGuid()}",
+            Description = "Test branch for integration tests",
+            Phone = "+5511999999999",
+            Address = "123 Test St",
+            City = "Test City",
+            State = "TS", 
+            PostalCode = "12345-678"
+        };
+        
+        var response = await _client.PostAsJsonAsync("/api/branches", request);
+        response.EnsureSuccessStatusCode();
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        return jsonDocument.RootElement.GetProperty("data").GetProperty("id").GetGuid();
+    }
+
+    private async Task<Guid> CreateTestCustomer()
+    {
+        var request = new
+        {
+            Username = $"testuser{Guid.NewGuid().ToString("N")[..8]}",
+            Email = $"test{Guid.NewGuid().ToString("N")[..8]}@test.com",
+            Phone = "+5511999999999",
+            Password = "Test@123",
+            Role = 2, // Customer
+            Status = 1 // Active
+        };
+        
+        var response = await _client.PostAsJsonAsync("/api/users", request);
+        response.EnsureSuccessStatusCode();
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        return jsonDocument.RootElement.GetProperty("id").GetGuid();
+    }
+
+    private async Task<Guid> CreateTestProduct(string title = "Test Product", decimal price = 100.00m)
+    {
+        var request = new
+        {
+            Title = title,
+            Price = price,
+            Description = "Test product for integration tests",
+            Category = "test",
+            Image = "test.jpg"
+        };
+        
+        var response = await _client.PostAsJsonAsync("/api/products", request);
+        response.EnsureSuccessStatusCode();
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        return jsonDocument.RootElement.GetProperty("id").GetGuid();
     }
 }

@@ -1,11 +1,13 @@
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.WebApi;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Ambev.DeveloperEvaluation.Integration;
 
@@ -13,53 +15,35 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseEnvironment("Testing");
+        
         builder.ConfigureServices(services =>
         {
-            var descriptor = services.SingleOrDefault(
+            // Replace database with in-memory 
+            var dbContextDescriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(DbContextOptions<DefaultContext>));
 
-            if (descriptor != null)
+            if (dbContextDescriptor != null)
             {
-                services.Remove(descriptor);
+                services.Remove(dbContextDescriptor);
             }
 
             services.AddDbContext<DefaultContext>(options =>
             {
-                options.UseInMemoryDatabase("InMemoryDbForTesting");
+                options.UseInMemoryDatabase(Guid.NewGuid().ToString());
             });
 
-            // Disable authorization for integration tests
-            services.AddTransient<IAuthorizationHandler, AllowAnonymousAuthorizationHandler>();
-
-            var sp = services.BuildServiceProvider();
-
-            using var scope = sp.CreateScope();
-            var scopedServices = scope.ServiceProvider;
-            var db = scopedServices.GetRequiredService<DefaultContext>();
-            var logger = scopedServices.GetRequiredService<ILogger<TestWebApplicationFactory>>();
-
-            try
+            // Configure test authentication that bypasses JWT
+            services.Configure<AuthenticationOptions>(options =>
             {
-                db.Database.EnsureCreated();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "An error occurred creating the test database.");
-            }
+                options.DefaultAuthenticateScheme = "Test";
+                options.DefaultChallengeScheme = "Test";
+            });
+
+            services.AddAuthentication("Test")
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                
+            services.AddAuthorization();
         });
-
-        builder.UseEnvironment("Testing");
-    }
-}
-
-public class AllowAnonymousAuthorizationHandler : IAuthorizationHandler
-{
-    public Task HandleAsync(AuthorizationHandlerContext context)
-    {
-        foreach (var requirement in context.PendingRequirements.ToArray())
-        {
-            context.Succeed(requirement);
-        }
-        return Task.CompletedTask;
     }
 }

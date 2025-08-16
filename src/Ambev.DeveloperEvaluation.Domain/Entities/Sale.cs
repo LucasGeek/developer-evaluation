@@ -36,10 +36,8 @@ public class Sale : BaseEntity
 
     public void AddItem(SaleItem item)
     {
-        // First validate the individual item (this will check if item.Quantity > 20)
         item.ApplyDiscount();
         
-        // Then validate the total quantity for this product across all items
         var currentQuantity = Items.Where(i => i.ProductId == item.ProductId).Sum(i => i.Quantity);
         if (currentQuantity + item.Quantity > 20)
             throw new InvalidOperationException("Cannot exceed 20 items of same product.");

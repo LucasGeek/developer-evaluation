@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Ambev.DeveloperEvaluation.WebApi.Features.Carts;
+using Ambev.DeveloperEvaluation.WebApi.Common;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -31,10 +32,11 @@ public class CartsControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<CartListResponse>(content, _jsonOptions);
+        var apiResponse = JsonSerializer.Deserialize<ApiResponseWithData<CartListResponse>>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.NotNull(result.Data);
+        Assert.NotNull(apiResponse);
+        Assert.NotNull(apiResponse.Data);
+        Assert.NotNull(apiResponse.Data.Data);
     }
 
     [Fact]
@@ -47,10 +49,11 @@ public class CartsControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<CartListResponse>(content, _jsonOptions);
+        var apiResponse = JsonSerializer.Deserialize<ApiResponseWithData<CartListResponse>>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.Equal(1, result.CurrentPage);
+        Assert.NotNull(apiResponse);
+        Assert.NotNull(apiResponse.Data);
+        Assert.Equal(1, apiResponse.Data.CurrentPage);
     }
 
     [Fact]
@@ -75,12 +78,12 @@ public class CartsControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<CartResponse>(content, _jsonOptions);
+        var cartResponse = JsonSerializer.Deserialize<CartResponse>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.NotEqual(Guid.Empty, result.Id);
-        Assert.Equal(cartRequest.UserId, result.UserId);
-        Assert.Equal(2, result.Products.Count);
+        Assert.NotNull(cartResponse);
+        Assert.NotEqual(Guid.Empty, cartResponse.Id);
+        Assert.Equal(cartRequest.UserId, cartResponse.UserId);
+        Assert.Equal(2, cartResponse.Products.Count);
     }
 
     [Fact]
@@ -116,8 +119,8 @@ public class CartsControllerIntegrationTests : IClassFixture<TestWebApplicationF
         };
 
         var createResponse = await _client.PostAsJsonAsync("/api/Carts", cartRequest);
-        var createdCart = JsonSerializer.Deserialize<CartResponse>(
-            await createResponse.Content.ReadAsStringAsync(), _jsonOptions);
+        var createContent = await createResponse.Content.ReadAsStringAsync();
+        var createdCart = JsonSerializer.Deserialize<CartResponse>(createContent, _jsonOptions);
 
         // Act
         var response = await _client.GetAsync($"/api/Carts/{createdCart!.Id}");
@@ -126,10 +129,11 @@ public class CartsControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<CartResponse>(content, _jsonOptions);
+        var apiResponse = JsonSerializer.Deserialize<ApiResponseWithData<CartResponse>>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.Equal(createdCart.Id, result.Id);
+        Assert.NotNull(apiResponse);
+        Assert.NotNull(apiResponse.Data);
+        Assert.Equal(createdCart.Id, apiResponse.Data.Id);
     }
 
     [Fact]
@@ -167,10 +171,11 @@ public class CartsControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<CartResponse>(content, _jsonOptions);
+        var apiResponse = JsonSerializer.Deserialize<ApiResponseWithData<CartResponse>>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.Equal(cartId, result.Id);
+        Assert.NotNull(apiResponse);
+        Assert.NotNull(apiResponse.Data);
+        Assert.Equal(cartId, apiResponse.Data.Id);
     }
 
     [Fact]

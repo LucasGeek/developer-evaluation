@@ -18,19 +18,15 @@ public static class TestingExtensions
     /// </summary>
     public static IServiceCollection AddInMemoryDatabases(this IServiceCollection services)
     {
-        // Configure EF Core with In-Memory database for write models
         services.AddDbContext<DefaultContext>(options =>
             options.UseInMemoryDatabase("TestDb"));
 
-        // Use in-memory implementations for read models (no MongoDB required)
         services.AddScoped<IReadModelRepository<SaleReadModel>, NullReadModelRepository<SaleReadModel>>();
         services.AddScoped<IReadModelRepository<ProductReadModel>, NullReadModelRepository<ProductReadModel>>();
         services.AddScoped<IReadModelRepository<UserReadModel>, NullReadModelRepository<UserReadModel>>();
 
-        // Use null cache service (no Redis required)
         services.AddSingleton<ICacheService, NullCacheService>();
 
-        // Use logging event bus for testing
         services.AddScoped<IEventBus, LoggingEventBus>();
 
         return services;
@@ -42,19 +38,15 @@ public static class TestingExtensions
     /// </summary>
     public static IServiceCollection AddSQLiteDatabases(this IServiceCollection services, string connectionString = "Data Source=:memory:")
     {
-        // Configure EF Core with SQLite for write models
         services.AddDbContext<DefaultContext>(options =>
             options.UseSqlite(connectionString));
 
-        // Use in-memory implementations for read models (no MongoDB required)
         services.AddScoped<IReadModelRepository<SaleReadModel>, NullReadModelRepository<SaleReadModel>>();
         services.AddScoped<IReadModelRepository<ProductReadModel>, NullReadModelRepository<ProductReadModel>>();
         services.AddScoped<IReadModelRepository<UserReadModel>, NullReadModelRepository<UserReadModel>>();
 
-        // Use null cache service (no Redis required)
         services.AddSingleton<ICacheService, NullCacheService>();
 
-        // Use logging event bus for testing
         services.AddScoped<IEventBus, LoggingEventBus>();
 
         return services;

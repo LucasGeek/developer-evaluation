@@ -26,7 +26,6 @@ public class ListSalesHandler : IRequestHandler<ListSalesQuery, ListSalesResult>
         _logger.LogInformation("Listing sales with filters: Page={Page}, Size={Size}, Order={Order}", 
             request.Page, request.Size, request.Order);
 
-        // Get paginated sales with filters
         var (sales, totalCount) = await _saleRepository.ListAsync(
             page: request.Page,
             size: request.Size,

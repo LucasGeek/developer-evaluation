@@ -52,7 +52,6 @@ public class ListProductsHandler : IQueryHandler<ListProductsQuery, ListProducts
             PageSize = request.Limit
         };
         
-        // Cache for 10 minutes
         await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(10));
         
         _logger.LogInformation("Retrieved {ProductCount} products out of {TotalCount}", 

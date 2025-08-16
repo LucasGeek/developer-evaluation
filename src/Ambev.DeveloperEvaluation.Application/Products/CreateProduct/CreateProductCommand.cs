@@ -4,6 +4,15 @@ namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 
 public class CreateProductCommand : ICommand<Guid>
 {
+    public CreateProductCommand() {}
+    public CreateProductCommand(string title, decimal price, string description, string category, string image)
+    {
+        Title = title;
+        Price = price;
+        Description = description;
+        Category = category;
+        Image = image;
+    }
     public string Title { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public string Description { get; set; } = string.Empty;

@@ -34,7 +34,6 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
     {
         _logger.LogInformation("Updating sale with ID: {SaleId}", request.Id);
 
-        // Get existing sale
         var existingSale = await _saleRepository.GetByIdAsync(request.Id);
         if (existingSale == null)
         {
@@ -48,22 +47,18 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
 
         _logger.LogInformation("Found existing sale: {SaleNumber}", existingSale.SaleNumber);
 
-        // Update sale date
         existingSale.UpdateSaleDetails(request.Date, existingSale.CustomerDescription, existingSale.BranchDescription);
 
-        // Clear existing items and add new ones
         existingSale.ClearItems();
 
         foreach (var itemDto in request.Items)
         {
-            // Validate product exists and get current price
             var product = await _productRepository.GetByIdAsync(itemDto.ProductId, cancellationToken);
             if (product == null)
             {
                 throw new ArgumentException($"Product with ID {itemDto.ProductId} not found");
             }
 
-            // Apply business rules for quantity
             if (itemDto.Quantity <= 0)
             {
                 throw new ArgumentException("Quantity must be greater than 0");
@@ -74,15 +69,12 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
                 throw new ArgumentException("Cannot sell more than 20 identical items");
             }
 
-            // Create sale item with actual product data
             var item = new SaleItem(
                 existingSale.Id,
                 itemDto.ProductId,
-                product.Title, // Use actual product title from database
+                product.Title,
                 itemDto.Quantity,
-                product.Price); // Use actual product price from database
-
-            // Apply discount based on business rules (handled by the entity)
+                product.Price);
             item.ApplyDiscount();
             
             if (item.Discount > 0)
@@ -96,19 +88,15 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
             existingSale.AddItem(item);
         }
 
-        // The sale will automatically recalculate total when items are added
-
-        // Update in repository
         await _saleRepository.UpdateAsync(existingSale);
 
-        // Publish SaleModified event
         var saleModifiedEvent = new SaleModifiedEvent
         {
             SaleId = existingSale.Id,
             SaleNumber = existingSale.SaleNumber,
-            PreviousTotalAmount = 0, // This would need to be tracked properly in a real implementation
+            PreviousTotalAmount = 0,
             NewTotalAmount = existingSale.TotalAmount,
-            PreviousItemCount = 0, // This would need to be tracked properly in a real implementation  
+            PreviousItemCount = 0,
             NewItemCount = existingSale.Items.Count,
             ModifiedAt = DateTime.UtcNow,
             ModificationReason = "Sale items updated"
@@ -119,7 +107,6 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
         _logger.LogInformation("Sale updated successfully: {SaleNumber}, New Total: {TotalAmount}", 
             existingSale.SaleNumber, existingSale.TotalAmount);
 
-        // Map to result
         var result = _mapper.Map<UpdateSaleResult>(existingSale);
         return result;
     }

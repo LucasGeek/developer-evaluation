@@ -22,11 +22,9 @@ public class MediatREventBus : IEventBus
         {
             var eventName = typeof(T).Name;
             
-            // Log the event for monitoring
             var eventData = JsonSerializer.Serialize(eventMessage, new JsonSerializerOptions { WriteIndented = true });
             _logger.LogInformation("Publishing Domain Event: {EventName} - {EventData}", eventName, eventData);
 
-            // Publish through MediatR if it's a notification
             if (eventMessage is INotification notification)
             {
                 await _mediator.Publish(notification);
@@ -50,11 +48,9 @@ public class MediatREventBus : IEventBus
         {
             var commandName = typeof(T).Name;
             
-            // Log the command for monitoring
             var commandData = JsonSerializer.Serialize(command, new JsonSerializerOptions { WriteIndented = true });
             _logger.LogInformation("Sending Command: {CommandName} - {CommandData}", commandName, commandData);
 
-            // Send through MediatR if it's a request
             if (command is IRequest request)
             {
                 await _mediator.Send(request);

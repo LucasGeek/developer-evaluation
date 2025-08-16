@@ -9,6 +9,7 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.WebApi.Common;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -53,9 +54,11 @@ public class EndToEndWorkflowTests : IClassFixture<TestWebApplicationFactory>
         var productsResponse = await _client.GetAsync("/api/Products");
         Assert.Equal(HttpStatusCode.OK, productsResponse.StatusCode);
 
-        var productsList = JsonSerializer.Deserialize<ProductListResponse>(
+        var apiProductsList = JsonSerializer.Deserialize<ApiResponseWithData<ProductListResponse>>(
             await productsResponse.Content.ReadAsStringAsync(), _jsonOptions);
-        Assert.NotNull(productsList);
+        Assert.NotNull(apiProductsList);
+        Assert.NotNull(apiProductsList.Data);
+        var productsList = apiProductsList.Data;
         Assert.NotEmpty(productsList.Data);
 
         var selectedProduct = productsList.Data.First();
@@ -81,18 +84,13 @@ public class EndToEndWorkflowTests : IClassFixture<TestWebApplicationFactory>
         // Step 4: Create a sale based on the cart
         var createSaleRequest = new CreateSaleRequest
         {
-            CustomerId = createdUser.Id,
-            CustomerDescription = $"{createdUser.Name.Firstname} {createdUser.Name.Lastname}",
             BranchId = Guid.NewGuid(),
-            BranchDescription = "Test Branch",
             Items = new List<CreateSaleItemRequest>
             {
                 new()
                 {
                     ProductId = selectedProduct.Id,
-                    ProductDescription = selectedProduct.Title,
                     Quantity = 2,
-                    UnitPrice = selectedProduct.Price
                 }
             }
         };
@@ -151,8 +149,9 @@ public class EndToEndWorkflowTests : IClassFixture<TestWebApplicationFactory>
         var initialResponse = await _client.GetAsync("/api/Products");
         Assert.Equal(HttpStatusCode.OK, initialResponse.StatusCode);
 
-        var initialProducts = JsonSerializer.Deserialize<ProductListResponse>(
+        var apiInitialProducts = JsonSerializer.Deserialize<ApiResponseWithData<ProductListResponse>>(
             await initialResponse.Content.ReadAsStringAsync(), _jsonOptions);
+        var initialProducts = apiInitialProducts?.Data;
         var initialCount = initialProducts?.TotalItems ?? 0;
 
         // Step 2: Create a new product
@@ -169,9 +168,11 @@ public class EndToEndWorkflowTests : IClassFixture<TestWebApplicationFactory>
         var createResponse = await _client.PostAsJsonAsync("/api/Products", createProductRequest);
         Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
 
-        var createdProduct = JsonSerializer.Deserialize<ProductResponse>(
+        var apiCreatedProduct = JsonSerializer.Deserialize<ApiResponseWithData<ProductResponse>>(
             await createResponse.Content.ReadAsStringAsync(), _jsonOptions);
-        Assert.NotNull(createdProduct);
+        Assert.NotNull(apiCreatedProduct);
+        Assert.NotNull(apiCreatedProduct.Data);
+        var createdProduct = apiCreatedProduct.Data;
         Assert.Equal(createProductRequest.Title, createdProduct.Title);
 
         // Step 3: Update the product
@@ -188,9 +189,11 @@ public class EndToEndWorkflowTests : IClassFixture<TestWebApplicationFactory>
         var updateResponse = await _client.PutAsJsonAsync($"/api/Products/{createdProduct.Id}", updateProductRequest);
         Assert.Equal(HttpStatusCode.OK, updateResponse.StatusCode);
 
-        var updatedProduct = JsonSerializer.Deserialize<ProductResponse>(
+        var apiUpdatedProduct = JsonSerializer.Deserialize<ApiResponseWithData<ProductResponse>>(
             await updateResponse.Content.ReadAsStringAsync(), _jsonOptions);
-        Assert.NotNull(updatedProduct);
+        Assert.NotNull(apiUpdatedProduct);
+        Assert.NotNull(apiUpdatedProduct.Data);
+        var updatedProduct = apiUpdatedProduct.Data;
         Assert.Equal(updateProductRequest.Title, updatedProduct.Title);
 
         // Step 4: Delete the product

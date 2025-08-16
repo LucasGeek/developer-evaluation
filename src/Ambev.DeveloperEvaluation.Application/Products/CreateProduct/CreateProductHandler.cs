@@ -33,7 +33,6 @@ public class CreateProductHandler : ICommandHandler<CreateProductCommand, Guid>
             request.Category,
             request.Image);
 
-        // Update rating if provided
         if (request.Rating.Rate > 0 || request.Rating.Count > 0)
         {
             product.UpdateRating(request.Rating.Rate, request.Rating.Count);
@@ -41,8 +40,7 @@ public class CreateProductHandler : ICommandHandler<CreateProductCommand, Guid>
 
         await _productRepository.CreateAsync(product, cancellationToken);
 
-        // Publish domain event
-        var productCreatedEvent = new
+       var productCreatedEvent = new
         {
             ProductId = product.Id,
             Title = product.Title,

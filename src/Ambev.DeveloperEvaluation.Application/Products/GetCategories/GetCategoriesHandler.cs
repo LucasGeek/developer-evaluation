@@ -40,7 +40,6 @@ public class GetCategoriesHandler : IQueryHandler<GetCategoriesQuery, GetCategor
             Categories = categories.ToList()
         };
         
-        // Cache for 1 hour (categories don't change often)
         await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromHours(1));
         
         _logger.LogInformation("Retrieved {CategoryCount} categories", result.Categories.Count);

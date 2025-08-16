@@ -31,10 +31,8 @@ public class ListUsersHandler : IQueryHandler<ListUsersQuery, ListUsersResult>
         _logger.LogInformation("Listing users with filters - Page: {Page}, Limit: {Limit}, Sort: {Sort}",
             request.Page, request.Limit, request.Sort);
 
-        // Create cache key based on request parameters
         var cacheKey = $"users:list:{request.Page}:{request.Limit}:{request.Sort}:{request.Email}:{request.Username}:{request.Role}:{request.Status}";
         
-        // Try to get from cache first
         var cachedResult = await _cacheService.GetAsync<ListUsersResult>(cacheKey);
         if (cachedResult != null)
         {
@@ -42,7 +40,6 @@ public class ListUsersHandler : IQueryHandler<ListUsersQuery, ListUsersResult>
             return cachedResult;
         }
 
-        // Get paginated users from repository
         var paginatedUsers = await _userRepository.GetAllAsync(request.Page, request.Limit, request.Sort, request.Email, request.Username, request.Role, request.Status, cancellationToken);
 
         var result = new ListUsersResult
@@ -53,7 +50,6 @@ public class ListUsersHandler : IQueryHandler<ListUsersQuery, ListUsersResult>
             PageSize = request.Limit
         };
         
-        // Cache for 5 minutes (users change less frequently than products)
         await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
         
         _logger.LogInformation("Retrieved {Count} users from database", result.Users.Count);

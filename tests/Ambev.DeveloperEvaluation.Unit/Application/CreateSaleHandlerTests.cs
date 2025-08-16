@@ -15,6 +15,7 @@ public class CreateSaleHandlerTests
     private readonly ISaleRepository _saleRepository;
     private readonly IProductRepository _productRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IBranchRepository _branchRepository;
     private readonly IEventBus _eventBus;
     private readonly IMapper _mapper;
     private readonly ILogger<CreateSaleHandler> _logger;
@@ -25,10 +26,11 @@ public class CreateSaleHandlerTests
         _saleRepository = Substitute.For<ISaleRepository>();
         _productRepository = Substitute.For<IProductRepository>();
         _userRepository = Substitute.For<IUserRepository>();
+        _branchRepository = Substitute.For<IBranchRepository>();
         _eventBus = Substitute.For<IEventBus>();
         _mapper = Substitute.For<IMapper>();
         _logger = Substitute.For<ILogger<CreateSaleHandler>>();
-        _handler = new CreateSaleHandler(_saleRepository, _productRepository, _userRepository, _eventBus, _mapper, _logger);
+        _handler = new CreateSaleHandler(_saleRepository, _productRepository, _userRepository, _branchRepository, _eventBus, _mapper, _logger);
     }
 
     [Fact(DisplayName = "Handle should create sale with correct properties")]
@@ -52,6 +54,10 @@ public class CreateSaleHandlerTests
         // Setup customer
         var customer = new User { Id = customerId, Username = "Test Customer" };
         _userRepository.GetByIdAsync(customerId, Arg.Any<CancellationToken>()).Returns(customer);
+
+        // Setup branch
+        var branch = new Branch("Test Branch", "Test", "123 Test St", "Test City", "TS", "12345", "555-0123");
+        _branchRepository.GetByIdAsync(branchId, Arg.Any<CancellationToken>()).Returns(branch);
 
         // Setup products
         var product1 = new Product("Product 1", 10.00m, "Description 1", "Category 1", "image1.jpg");
@@ -92,6 +98,10 @@ public class CreateSaleHandlerTests
         // Setup customer
         var customer = new User { Id = customerId, Username = "Test Customer" };
         _userRepository.GetByIdAsync(customerId, Arg.Any<CancellationToken>()).Returns(customer);
+
+        // Setup branch
+        var branch = new Branch("Test Branch", "Test", "123 Test St", "Test City", "TS", "12345", "555-0123");
+        _branchRepository.GetByIdAsync(branchId, Arg.Any<CancellationToken>()).Returns(branch);
 
         // Setup products
         var product1 = new Product("Product 1", 10.00m, "Description 1", "Category 1", "image1.jpg");
@@ -150,6 +160,10 @@ public class CreateSaleHandlerTests
         var customer = new User { Id = customerId, Username = "Test Customer" };
         _userRepository.GetByIdAsync(customerId, Arg.Any<CancellationToken>()).Returns(customer);
 
+        // Setup branch
+        var branch = new Branch("Test Branch", "Test", "123 Test St", "Test City", "TS", "12345", "555-0123");
+        _branchRepository.GetByIdAsync(branchId, Arg.Any<CancellationToken>()).Returns(branch);
+
         // Setup product
         var product = new Product("Product 1", 10.00m, "Description 1", "Category 1", "image1.jpg");
         _productRepository.GetByIdAsync(productId, Arg.Any<CancellationToken>()).Returns(product);
@@ -188,6 +202,10 @@ public class CreateSaleHandlerTests
         // Setup customer
         var customer = new User { Id = customerId, Username = "Test Customer" };
         _userRepository.GetByIdAsync(customerId, Arg.Any<CancellationToken>()).Returns(customer);
+
+        // Setup branch
+        var branch = new Branch("Test Branch", "Test", "123 Test St", "Test City", "TS", "12345", "555-0123");
+        _branchRepository.GetByIdAsync(branchId, Arg.Any<CancellationToken>()).Returns(branch);
 
         // Setup product
         var product = new Product("Product 1", 10.00m, "Description 1", "Category 1", "image1.jpg");

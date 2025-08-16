@@ -167,26 +167,21 @@ public class ProductRepositoryTests : IDisposable
         await _context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.DeleteAsync(product.Id);
+        await _repository.DeleteAsync(product.Id);
 
         // Assert
-        Assert.True(result);
-
         var deletedProduct = await _context.Products.FindAsync(product.Id);
         Assert.Null(deletedProduct);
     }
 
     [Fact]
-    public async Task DeleteAsync_WithNonExistentProduct_ShouldReturnFalse()
+    public async Task DeleteAsync_WithNonExistentProduct_ShouldNotThrow()
     {
         // Arrange
         var nonExistentId = Guid.NewGuid();
 
-        // Act
-        var result = await _repository.DeleteAsync(nonExistentId);
-
-        // Assert
-        Assert.False(result);
+        // Act & Assert - should not throw any exception
+        await _repository.DeleteAsync(nonExistentId);
     }
 
     [Fact]

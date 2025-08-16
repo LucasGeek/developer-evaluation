@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products;
+using Ambev.DeveloperEvaluation.WebApi.Common;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -47,7 +48,8 @@ public class ProductsControllerIntegrationTests : IClassFixture<TestWebApplicati
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<ProductListResponse>(content, _jsonOptions);
+        var apiResponse = JsonSerializer.Deserialize<ApiResponseWithData<ProductListResponse>>(content, _jsonOptions);
+        var result = apiResponse?.Data;
         
         Assert.NotNull(result);
         Assert.Equal(1, result.CurrentPage);
@@ -179,7 +181,8 @@ public class ProductsControllerIntegrationTests : IClassFixture<TestWebApplicati
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<ProductResponse>(content, _jsonOptions);
+        var apiResponse = JsonSerializer.Deserialize<ApiResponseWithData<ProductResponse>>(content, _jsonOptions);
+        var result = apiResponse?.Data;
         
         Assert.NotNull(result);
         Assert.Equal(updateRequest.Title, result.Title);
@@ -208,7 +211,8 @@ public class ProductsControllerIntegrationTests : IClassFixture<TestWebApplicati
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<List<string>>(content, _jsonOptions);
+        var apiResponse = JsonSerializer.Deserialize<ApiResponseWithData<List<string>>>(content, _jsonOptions);
+        var result = apiResponse?.Data;
         
         Assert.NotNull(result);
     }
@@ -223,7 +227,8 @@ public class ProductsControllerIntegrationTests : IClassFixture<TestWebApplicati
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<ProductListResponse>(content, _jsonOptions);
+        var apiResponse = JsonSerializer.Deserialize<ApiResponseWithData<ProductListResponse>>(content, _jsonOptions);
+        var result = apiResponse?.Data;
         
         Assert.NotNull(result);
         Assert.NotNull(result.Data);

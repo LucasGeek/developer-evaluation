@@ -40,7 +40,6 @@ public class MongoReadModelRepository<T> : IReadModelRepository<T> where T : cla
 
     public async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
-        // Get Id field value using reflection
         var idProperty = typeof(T).GetProperty("Id");
         if (idProperty != null)
         {

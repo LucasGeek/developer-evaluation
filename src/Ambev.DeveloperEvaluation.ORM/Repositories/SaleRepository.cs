@@ -18,7 +18,6 @@ public class SaleRepository : ISaleRepository
     {
         var branchPrefix = branchId.ToString("N").Substring(0, 8).ToUpper();
         
-        // Get the latest sale number for this branch
         var lastSale = await _context.Sales
             .Where(s => s.BranchId == branchId)
             .OrderByDescending(s => s.SaleNumber)
@@ -27,7 +26,6 @@ public class SaleRepository : ISaleRepository
         int nextNumber = 1;
         if (lastSale != null && !string.IsNullOrEmpty(lastSale.SaleNumber))
         {
-            // Extract number from format "BRANCH12345678-0001"
             var parts = lastSale.SaleNumber.Split('-');
             if (parts.Length == 2 && int.TryParse(parts[1], out var currentNumber))
             {
@@ -77,7 +75,6 @@ public class SaleRepository : ISaleRepository
     {
         var query = _context.Sales.Include(s => s.Items).AsQueryable();
 
-        // Apply filters
         if (minDate.HasValue)
             query = query.Where(s => s.Date >= minDate.Value);
 
@@ -96,7 +93,6 @@ public class SaleRepository : ISaleRepository
         if (!string.IsNullOrEmpty(saleNumber))
             query = query.Where(s => s.SaleNumber.Contains(saleNumber));
 
-        // Apply ordering
         if (!string.IsNullOrEmpty(order))
         {
             query = order.ToLower() switch

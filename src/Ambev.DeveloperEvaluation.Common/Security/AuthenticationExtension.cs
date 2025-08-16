@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
@@ -11,6 +12,15 @@ namespace Ambev.DeveloperEvaluation.Common.Security
     {
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
+            // Don't configure JWT in Testing environment
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (environment == "Testing")
+            {
+                // Still add the token generator for potential use in tests
+                services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+                return services;
+            }
+
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
             var secretKey = configuration["Jwt:SecretKey"]?.ToString();

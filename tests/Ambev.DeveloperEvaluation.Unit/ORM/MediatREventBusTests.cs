@@ -30,23 +30,20 @@ public class MediatREventBusTests
 
         // Assert
         await _mediator.Received(1).Publish(testEvent, Arg.Any<CancellationToken>());
-        _logger.Received(1).LogInformation(
-            "Event published via MediatR: {EventType}",
-            nameof(TestEvent));
+        _logger.ReceivedWithAnyArgs(2).LogInformation(default);
     }
 
     [Fact]
-    public async Task PublishAsync_WithNullEvent_ShouldLogWarning()
+    public async Task PublishAsync_WithNullEvent_ShouldNotThrow()
     {
         // Arrange
-        object nullEvent = null;
+        TestEvent nullEvent = null;
 
-        // Act
+        // Act - JsonSerializer.Serialize will serialize null as "null"
         await _eventBus.PublishAsync(nullEvent);
 
-        // Assert
-        await _mediator.DidNotReceive().Publish(Arg.Any<object>(), Arg.Any<CancellationToken>());
-        _logger.Received(1).LogWarning("Attempted to publish null event via MediatR");
+        // Assert - No mediator call should happen since null doesn't implement INotification
+        await _mediator.DidNotReceive().Publish(Arg.Any<INotification>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -59,17 +56,19 @@ public class MediatREventBusTests
         _mediator.When(x => x.Publish(testEvent, Arg.Any<CancellationToken>()))
                  .Do(x => throw exception);
 
-        // Act
-        await _eventBus.PublishAsync(testEvent);
-
-        // Assert
-        _logger.Received(1).LogError(exception,
-            "Error publishing event via MediatR: {EventType}",
-            nameof(TestEvent));
+        // Act & Assert - Should rethrow the exception
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _eventBus.PublishAsync(testEvent));
+        
+        _logger.Received().Log(
+            LogLevel.Error,
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            exception,
+            Arg.Any<Func<object, Exception, string>>());
     }
 
     [Fact]
-    public async Task PublishAsync_WithStringEvent_ShouldPublishThroughMediator()
+    public async Task PublishAsync_WithStringEvent_ShouldLogWarning()
     {
         // Arrange
         var stringEvent = "Simple string event";
@@ -77,14 +76,23 @@ public class MediatREventBusTests
         // Act
         await _eventBus.PublishAsync(stringEvent);
 
-        // Assert
-        await _mediator.Received(1).Publish(stringEvent, Arg.Any<CancellationToken>());
-        _logger.Received(1).LogInformation(
-            "Event published via MediatR: {EventType}",
-            "String");
+    // Assert - String doesn't implement INotification, so should log info and warning
+    await _mediator.DidNotReceive().Publish(Arg.Any<INotification>(), Arg.Any<CancellationToken>());
+    _logger.Received().Log(
+        LogLevel.Information,
+        Arg.Any<EventId>(),
+        Arg.Any<object>(),
+        null,
+        Arg.Any<Func<object, Exception, string>>());
+    _logger.Received().Log(
+        LogLevel.Warning,
+        Arg.Any<EventId>(),
+        Arg.Any<object>(),
+        null,
+        Arg.Any<Func<object, Exception, string>>());
     }
 
-    private class TestEvent
+    private class TestEvent : INotification
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;

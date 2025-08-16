@@ -30,7 +30,6 @@ public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, Canc
     {
         _logger.LogInformation("Cancelling item {ItemId} from sale {SaleId}", request.ItemId, request.SaleId);
 
-        // Get existing sale
         var existingSale = await _saleRepository.GetByIdAsync(request.SaleId);
         if (existingSale == null)
         {
@@ -42,14 +41,12 @@ public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, Canc
             throw new InvalidOperationException("Cannot cancel items from a cancelled sale");
         }
 
-        // Find the item to remove
         var itemToRemove = existingSale.Items.FirstOrDefault(i => i.Id == request.ItemId);
         if (itemToRemove == null)
         {
             throw new InvalidOperationException($"Item with ID {request.ItemId} not found in sale {existingSale.SaleNumber}");
         }
 
-        // Check if this is the last item
         if (existingSale.Items.Count == 1)
         {
             throw new InvalidOperationException("Cannot cancel the last item in a sale. Consider cancelling the entire sale instead.");
@@ -62,13 +59,10 @@ public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, Canc
         var itemQuantity = itemToRemove.Quantity;
         var itemTotal = itemToRemove.Total;
 
-        // Remove the item using domain method
         existingSale.RemoveItemById(itemToRemove.Id);
 
-        // Update in repository
         await _saleRepository.UpdateAsync(existingSale);
 
-        // Publish ItemCancelledEvent
         var itemCancelledEvent = new ItemCancelledEvent
         {
             SaleId = existingSale.Id,
@@ -86,7 +80,6 @@ public class CancelSaleItemHandler : IRequestHandler<CancelSaleItemCommand, Canc
         _logger.LogInformation("Item cancelled successfully from sale {SaleNumber}, New Total: {TotalAmount}", 
             existingSale.SaleNumber, existingSale.TotalAmount);
 
-        // Return result
         var result = new CancelSaleItemResult
         {
             SaleId = existingSale.Id,

@@ -5,6 +5,7 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.GetUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Users.UpdateUser;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.WebApi.Common;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -34,10 +35,11 @@ public class UsersControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<UserListResponse>(content, _jsonOptions);
+        var apiResponse = JsonSerializer.Deserialize<ApiResponseWithData<UserListResponse>>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.NotNull(result.Data);
+        Assert.NotNull(apiResponse);
+        Assert.NotNull(apiResponse.Data);
+        Assert.NotNull(apiResponse.Data.Data);
     }
 
     [Fact]
@@ -50,10 +52,11 @@ public class UsersControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<UserListResponse>(content, _jsonOptions);
+        var apiResponse = JsonSerializer.Deserialize<ApiResponseWithData<UserListResponse>>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.Equal(1, result.CurrentPage);
+        Assert.NotNull(apiResponse);
+        Assert.NotNull(apiResponse.Data);
+        Assert.Equal(1, apiResponse.Data.CurrentPage);
     }
 
     [Fact]
@@ -77,12 +80,12 @@ public class UsersControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<GetUserResponse>(content, _jsonOptions);
+        var userResponse = JsonSerializer.Deserialize<GetUserResponse>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.NotEqual(Guid.Empty, result.Id);
-        Assert.Equal(userRequest.Email, result.Email);
-        Assert.Equal(userRequest.Username, result.Username);
+        Assert.NotNull(userResponse);
+        Assert.NotEqual(Guid.Empty, userResponse.Id);
+        Assert.Equal(userRequest.Email, userResponse.Email);
+        Assert.Equal(userRequest.Username, userResponse.Username);
     }
 
     [Fact]
@@ -140,10 +143,10 @@ public class UsersControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<GetUserResponse>(content, _jsonOptions);
+        var userResponse = JsonSerializer.Deserialize<GetUserResponse>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.NotEqual(Guid.Empty, result.Id);
+        Assert.NotNull(userResponse);
+        Assert.NotEqual(Guid.Empty, userResponse.Id);
     }
 
     [Fact]
@@ -183,11 +186,11 @@ public class UsersControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<GetUserResponse>(content, _jsonOptions);
+        var userResponse = JsonSerializer.Deserialize<GetUserResponse>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.Equal(updateRequest.Email, result.Email);
-        Assert.Equal(updateRequest.Username, result.Username);
+        Assert.NotNull(userResponse);
+        Assert.Equal(updateRequest.Email, userResponse.Email);
+        Assert.Equal(updateRequest.Username, userResponse.Username);
     }
 
     [Fact]
@@ -224,10 +227,10 @@ public class UsersControllerIntegrationTests : IClassFixture<TestWebApplicationF
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<GetUserResponse>(content, _jsonOptions);
+        var userResponse = JsonSerializer.Deserialize<GetUserResponse>(content, _jsonOptions);
         
-        Assert.NotNull(result);
-        Assert.NotEqual(Guid.Empty, result.Id);
+        Assert.NotNull(userResponse);
+        Assert.NotEqual(Guid.Empty, userResponse.Id);
     }
 
     [Fact]

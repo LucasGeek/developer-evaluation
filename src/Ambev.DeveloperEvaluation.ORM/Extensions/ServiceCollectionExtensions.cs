@@ -16,7 +16,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddMongoDb(this IServiceCollection services, IConfiguration configuration)
     {
         
-        // Add MongoDB only if connection string is available
         var connectionString = configuration.GetConnectionString("MongoDbConnection");
         
         if (!string.IsNullOrEmpty(connectionString))
@@ -25,7 +24,6 @@ public static class ServiceCollectionExtensions
             {
                 services.AddSingleton<IMongoContext, MongoContext>();
                 
-                // Register read model repositories
                 services.AddScoped<IReadModelRepository<SaleReadModel>, MongoReadModelRepository<SaleReadModel>>();
                 services.AddScoped<IReadModelRepository<ProductReadModel>, MongoReadModelRepository<ProductReadModel>>();
                 services.AddScoped<IReadModelRepository<UserReadModel>, MongoReadModelRepository<UserReadModel>>();
@@ -34,7 +32,6 @@ public static class ServiceCollectionExtensions
             catch (Exception ex)
             {
                 Log.Error(ex, "❌ [MONGO] MongoDB setup failed, falling back to null repositories");
-                // If MongoDB setup fails, fall back to null repositories
                 services.AddScoped<IReadModelRepository<SaleReadModel>, NullReadModelRepository<SaleReadModel>>();
                 services.AddScoped<IReadModelRepository<ProductReadModel>, NullReadModelRepository<ProductReadModel>>();
                 services.AddScoped<IReadModelRepository<UserReadModel>, NullReadModelRepository<UserReadModel>>();
@@ -42,7 +39,6 @@ public static class ServiceCollectionExtensions
         }
         else
         {
-            // Add null object pattern repositories for development
             services.AddScoped<IReadModelRepository<SaleReadModel>, NullReadModelRepository<SaleReadModel>>();
             services.AddScoped<IReadModelRepository<ProductReadModel>, NullReadModelRepository<ProductReadModel>>();
             services.AddScoped<IReadModelRepository<UserReadModel>, NullReadModelRepository<UserReadModel>>();
@@ -53,7 +49,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
         
-        // Add Redis only if connection string is available
         var connectionString = configuration.GetConnectionString("RedisConnection");
         
         if (!string.IsNullOrEmpty(connectionString))
@@ -71,7 +66,6 @@ public static class ServiceCollectionExtensions
                     catch (Exception ex)
                     {
                         Log.Error(ex, "❌ [REDIS] Redis connection failed, returning null");
-                        // If Redis connection fails, return null and fall back to NullCacheService
                         return null;
                     }
                 });
@@ -87,13 +81,11 @@ public static class ServiceCollectionExtensions
             catch (Exception ex)
             {
                 Log.Error(ex, "❌ [REDIS] Redis setup failed, falling back to null cache service");
-                // If any Redis setup fails, fall back to null cache service
                 services.AddSingleton<ICacheService, NullCacheService>();
             }
         }
         else
         {
-            // Add a no-op cache service for development
             services.AddSingleton<ICacheService, NullCacheService>();
         }
         
@@ -102,19 +94,14 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
     {
-        // Use MediatR-based event bus for proper CQRS event handling
-        // This enables domain event handlers to update read models
         services.AddScoped<IEventBus, MediatREventBus>();
         
-        // Rebus event bus is temporarily disabled until proper transport is configured
-        // services.AddScoped<RebusEventBus>();
         
         return services;
     }
 
     public static IServiceCollection AddRebus(this IServiceCollection services, IConfiguration configuration)
     {
-        // For now, we'll use MediatR for event publishing
         // In production, this could be extended with proper Rebus transport (Redis, RabbitMQ, etc.)
         // services.AddRebus(configure => configure...);
         

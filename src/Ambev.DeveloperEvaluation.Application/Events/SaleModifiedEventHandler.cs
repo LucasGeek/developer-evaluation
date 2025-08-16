@@ -33,7 +33,6 @@ public class SaleModifiedEventHandler : INotificationHandler<SaleModifiedEvent>
         {
             _logger.LogInformation("Processing SaleModifiedEvent for Sale ID: {SaleId}", notification.SaleId);
 
-            // Get the updated sale entity from PostgreSQL
             var sale = await _saleRepository.GetByIdAsync(notification.SaleId);
             if (sale == null)
             {
@@ -41,10 +40,8 @@ public class SaleModifiedEventHandler : INotificationHandler<SaleModifiedEvent>
                 return;
             }
 
-            // Map to read model
             var saleReadModel = _mapper.Map<SaleReadModel>(sale);
 
-            // Update MongoDB read model
             await _saleReadModelRepository.UpdateAsync(saleReadModel, cancellationToken);
 
             _logger.LogInformation("Sale read model updated successfully for Sale ID: {SaleId}", notification.SaleId);

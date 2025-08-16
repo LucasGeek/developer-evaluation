@@ -34,16 +34,13 @@ public class UpdateUserHandler : ICommandHandler<UpdateUserCommand, UpdateUserRe
             throw new ArgumentException($"User with ID {request.Id} not found");
         }
 
-        // Update user properties
         existingUser.Username = request.Username;
         existingUser.Email = request.Email;
         existingUser.Phone = request.Phone;
 
-        // Parse and set Role
         if (Enum.TryParse<UserRole>(request.Role, true, out var userRole))
             existingUser.Role = userRole;
 
-        // Parse and set Status
         if (Enum.TryParse<UserStatus>(request.Status, true, out var userStatus))
             existingUser.Status = userStatus;
 

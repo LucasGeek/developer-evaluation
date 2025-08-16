@@ -5,6 +5,10 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 /// </summary>
 public class CreateSaleRequest
 {
+    public string BranchDescription { get; set; }
+    public Guid CustomerId { get; set; }
+    public string CustomerDescription { get; set; }
+    public DateTime Date { get; set; }
     /// <summary>
     /// The ID of the branch where the sale is made
     /// </summary>
@@ -22,6 +26,8 @@ public class CreateSaleRequest
 /// </summary>
 public class CreateSaleItemRequest
 {
+    public string ProductDescription { get; set; }
+    public decimal UnitPrice { get; set; }
     /// <summary>
     /// The ID of the product being purchased
     /// </summary>

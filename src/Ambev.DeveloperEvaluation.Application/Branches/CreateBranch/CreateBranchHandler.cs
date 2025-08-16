@@ -39,14 +39,12 @@ public class CreateBranchHandler : IRequestHandler<CreateBranchCommand, Guid>
             "Creating branch {BranchName} at {Address}, CorrelationId: {CorrelationId}",
             request.Name, request.Address, correlationId);
 
-        // Check if branch name already exists
         var nameExists = await _branchRepository.ExistsByNameAsync(request.Name, cancellationToken: cancellationToken);
         if (nameExists)
         {
             throw new InvalidOperationException($"Branch with name '{request.Name}' already exists");
         }
 
-        // Create branch entity
         var branch = new Branch(
             request.Name,
             request.Description,
@@ -56,7 +54,6 @@ public class CreateBranchHandler : IRequestHandler<CreateBranchCommand, Guid>
             request.PostalCode,
             request.Phone);
 
-        // Persist to database
         await _branchRepository.CreateAsync(branch, cancellationToken);
 
         _logger.LogInformation(

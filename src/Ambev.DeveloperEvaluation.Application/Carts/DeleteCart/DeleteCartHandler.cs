@@ -42,8 +42,7 @@ public class DeleteCartHandler : ICommandHandler<DeleteCartCommand, bool>
 
         await _cartRepository.DeleteAsync(request.Id, cancellationToken);
 
-        // Publish domain event
-        var cartDeletedEvent = new
+       var cartDeletedEvent = new
         {
             CartId = cart.Id,
             UserId = cart.UserId,

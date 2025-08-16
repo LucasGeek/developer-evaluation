@@ -48,12 +48,9 @@ public class SalesController : BaseController
     [ProducesResponseType(typeof(ApiResponse), 400)]
     public async Task<IActionResult> Create([FromBody] CreateSaleRequest request)
     {
-        // Extract customer ID from JWT token
-        var customerId = GetCurrentUserGuid();
-        
         var command = new CreateSaleCommand(
             request.BranchId,
-            customerId,
+            request.CustomerId,
             request.Items.Select(_mapper.Map<CreateSaleItemDto>).ToList()
         );
         
