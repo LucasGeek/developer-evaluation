@@ -749,3 +749,7 @@ Backup of *.doc*
 # OMC internal state
 .omc/
 appsettings.Development.json
+
+.idea/
+.omc/
+.vs/
