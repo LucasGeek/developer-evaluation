@@ -1,0 +1,14 @@
+using DeveloperEvaluation.ORM.CQRS;
+
+namespace DeveloperEvaluation.Application.Carts.ListCarts;
+
+public class ListCartsQuery : IQuery<ListCartsResult>
+{
+    public int Page { get; set; } = 1;
+    public int Limit { get; set; } = 20;
+    public string? Sort { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+    public Guid? StartUserId { get; set; }
+    public Guid? EndUserId { get; set; }
+}

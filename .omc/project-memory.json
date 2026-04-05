@@ -1,0 +1,248 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1775424772000,
+  "projectRoot": "/Users/albuquerque/Documents/projetos/profile-github/developer-evaluation",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "src",
+      "tests"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 1,
+      "lastAccessed": 1775424771988,
+      "keyFiles": []
+    },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 1,
+      "lastAccessed": 1775424771988,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "",
+      "accessCount": 11,
+      "lastAccessed": 1775428354391,
+      "type": "directory"
+    },
+    {
+      "path": "src/DeveloperEvaluation.ORM/Repositories/SaleRepository.cs",
+      "accessCount": 8,
+      "lastAccessed": 1775426265344,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.WebApi/Program.cs",
+      "accessCount": 5,
+      "lastAccessed": 1775428298860,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.WebApi/appsettings.Development.json",
+      "accessCount": 3,
+      "lastAccessed": 1775425496707,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.WebApi/Features/Branches/BranchesController.cs",
+      "accessCount": 3,
+      "lastAccessed": 1775425870687,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.ORM/Seeding/DataSeeder.cs",
+      "accessCount": 3,
+      "lastAccessed": 1775428338983,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Application/Carts/UpdateCart/UpdateCartHandler.cs",
+      "accessCount": 2,
+      "lastAccessed": 1775425832229,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Application/Carts/DeleteCart/DeleteCartHandler.cs",
+      "accessCount": 2,
+      "lastAccessed": 1775426353462,
+      "type": "file"
+    },
+    {
+      "path": "launchSettings.json",
+      "accessCount": 2,
+      "lastAccessed": 1775428330344,
+      "type": "file"
+    },
+    {
+      "path": "docker-compose.yml",
+      "accessCount": 2,
+      "lastAccessed": 1775428335145,
+      "type": "file"
+    },
+    {
+      "path": "docker-compose.infra.yml",
+      "accessCount": 2,
+      "lastAccessed": 1775428337965,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.ORM/Mapping/SaleItemConfiguration.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775424780704,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Application/Sales/UpdateSale/UpdateSaleHandler.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775424781014,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Domain/Entities/Sale.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775424789742,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.WebApi/Features/Auth/AuthenticateUserFeature/AuthenticateUserRequest.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775424950480,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Common/Security/BCryptPasswordHasher.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775424972001,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.WebApi/Features/Sales/UpdateSale/UpdateSaleRequest.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425048728,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Domain/Entities/SaleItem.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425256375,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.ORM/DefaultContext.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425261157,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Domain/Common/BaseEntity.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425270100,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.WebApi",
+      "accessCount": 1,
+      "lastAccessed": 1775425609525,
+      "type": "directory"
+    },
+    {
+      "path": "src",
+      "accessCount": 1,
+      "lastAccessed": 1775425656539,
+      "type": "directory"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Application/Carts/ListCarts/ListCartsHandler.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425659766,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Application/Branches/CreateBranch/CreateBranchHandler.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425804006,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Application/Branches/UpdateBranch/UpdateBranchCommand.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425839639,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Application/Branches/DeleteBranch/DeleteBranchCommand.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425840288,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Application/Branches/UpdateBranch/UpdateBranchHandler.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425846391,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.Application/Branches/DeleteBranch/DeleteBranchHandler.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425848848,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.WebApi/Features/Branches/CreateBranch/CreateBranchRequest.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775425860756,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.WebApi/Features/Users/CreateUser/CreateUserRequest.cs",
+      "accessCount": 1,
+      "lastAccessed": 1775426022954,
+      "type": "file"
+    },
+    {
+      "path": "src/DeveloperEvaluation.WebApi/Properties/launchSettings.json",
+      "accessCount": 1,
+      "lastAccessed": 1775428322671,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 1,
+      "lastAccessed": 1775428343847,
+      "type": "directory"
+    }
+  ],
+  "userDirectives": []
+}

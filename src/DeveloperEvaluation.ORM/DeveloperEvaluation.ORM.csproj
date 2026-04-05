@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Title>Vendor-Test-Gen-0001</Title>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.10" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
+		<!-- MongoDB for Read Models -->
+		<PackageReference Include="MongoDB.Driver" Version="2.28.0" />
+		<PackageReference Include="MongoDB.Extensions.Context" Version="1.4.0" />
+		<!-- Redis for Caching -->
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.10" />
+		<PackageReference Include="Rebus" Version="8.8.0" />
+		<PackageReference Include="Rebus.Serilog" Version="8.0.0" />
+		<PackageReference Include="Rebus.ServiceProvider" Version="10.5.0" />
+		<PackageReference Include="StackExchange.Redis" Version="2.8.58" />
+		<!-- In-Memory and SQLite for Testing -->
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
+		<!-- Event Bus via Logging (simplified approach) -->
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\DeveloperEvaluation.Domain\DeveloperEvaluation.Domain.csproj" />
+	</ItemGroup>
+</Project>

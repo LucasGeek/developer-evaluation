@@ -1,0 +1,39 @@
+version: '3.8'
+
+networks:
+  evaluation_private:
+    driver: bridge
+
+services:
+  developerevaluation.database:
+    container_name: developer_evaluation_database
+    image: postgres:13
+    environment:
+      POSTGRES_DB: developer_evaluation
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: ev@luAt10n
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+    networks:
+      - evaluation_private
+
+  developerevaluation.nosql:
+    container_name: developer_evaluation_nosql
+    image: mongo:8.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: developer
+      MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
+    ports:
+      - "27017:27017"
+    networks:
+      - evaluation_private
+
+  developerevaluation.cache:
+    container_name: developer_evaluation_cache
+    image: redis:7.4.1-alpine
+    command: redis-server --requirepass ev@luAt10n
+    ports:
+      - "6380:6379"
+    networks:
+      - evaluation_private
