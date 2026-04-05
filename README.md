@@ -1,17 +1,16 @@
-# Developer Evaluation - Sales API 🍺
+# Developer Evaluation - Sales API
 
 [![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-12.0-blue)](https://docs.microsoft.com/en-us/dotnet/csharp/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)](https://www.postgresql.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13-blue)](https://www.postgresql.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-8.0-green)](https://www.mongodb.com/)
 [![Redis](https://img.shields.io/badge/Redis-7.4-red)](https://redis.io/)
 
-A comprehensive **Sales Management API** built with **.NET 8** implementing **Clean Architecture**, **CQRS pattern**, and **Domain-Driven Design (DDD)** principles. This project features a complete sales system with automatic discount calculations, inventory management, and real-time data synchronization.
+A comprehensive **Sales Management API** built with **.NET 8** implementing **Clean Architecture**, **CQRS pattern**, and **Domain-Driven Design (DDD)** principles. This project features a complete sales system with automatic discount calculations, product catalog management, shopping carts, and role-based access control.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
-- [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Getting Started](#getting-started)
@@ -20,168 +19,122 @@ A comprehensive **Sales Management API** built with **.NET 8** implementing **Cl
 - [API Documentation](#api-documentation)
 - [Business Rules](#business-rules)
 - [Testing](#testing)
-- [Performance](#performance)
 - [Security](#security)
-- [Contributing](#contributing)
 
-## 🎯 Overview
+## Overview
 
 This project serves as a **senior developer evaluation**, demonstrating proficiency in:
 
 - **Clean Architecture** with proper layer separation
-- **CQRS** (Command Query Responsibility Segregation) pattern
-- **Event-driven architecture** with domain events
+- **CQRS** (Command Query Responsibility Segregation) via MediatR
+- **Domain-Driven Design** with rich domain entities and business rules
 - **RESTful API** design with comprehensive CRUD operations
 - **Multi-database** architecture (PostgreSQL + MongoDB + Redis)
-- **Automated testing** with comprehensive coverage
-- **Security** best practices and authentication
-- **Performance optimization** and caching strategies
+- **JWT authentication** with role-based authorization
+- **Automated testing** across unit, integration, and functional layers
 
 ### Core Business Domain
 
 The API manages a **Sales System** for a product catalog, handling:
 
-- **Sales Management**: Complete CRUD operations for sales records
-- **Product Catalog**: Beverage and snack inventory
-- **Shopping Carts**: Customer cart management with real-time updates
+- **Sales Management**: Complete CRUD operations with automatic discount calculation
+- **Product Catalog**: Beverages, snacks, and energy drinks inventory
+- **Shopping Carts**: Customer cart management with real-time price calculation
+- **Branch Management**: Multi-branch sales tracking
 - **User Management**: Role-based access control (Admin, Manager, Customer)
-- **Discount Engine**: Automatic discount calculations based on quantity tiers
-- **Inventory Control**: Stock validation and business rule enforcement
+- **Discount Engine**: Automatic discounts based on quantity tiers (4–9 items → 10%, 10–20 items → 20%)
 
-## ✨ Features
-
-### 🛒 Sales Management
-- Complete **CRUD operations** for sales records
-- **Real-time discount calculations** based on quantity rules
-- **Inventory validation** with business rule enforcement
-- **Sales cancellation** with proper status tracking
-- **Multi-item sales** with individual item management
-
-### 📦 Product Catalog
-- **Comprehensive product management** with categories
-- **Real-time inventory tracking**
-- **Product search and filtering** by category, price, rating
-- **Pagination and sorting** capabilities
-- **Rating system** with aggregated statistics
-
-### 🛍️ Shopping Cart System
-- **Persistent cart management** across sessions
-- **Real-time price calculations** with discounts
-- **Cart sharing** and collaborative shopping
-- **Auto-save functionality** for user convenience
-
-### 👥 User Management
-- **Role-based access control** (Admin, Manager, Customer)
-- **JWT authentication** with secure token handling
-- **User profile management** with status tracking
-- **Password encryption** using industry-standard hashing
-
-### 🔄 CQRS & Event Sourcing
-- **Command-Query separation** for optimal performance
-- **Event-driven synchronization** between write and read models
-- **Real-time data consistency** across multiple databases
-- **Audit trail** with complete operation history
-
-### 🚀 Performance & Scalability
-- **Redis caching** for frequently accessed data
-- **Database optimization** with proper indexing
-- **Async operations** throughout the application
-- **Horizontal scaling** ready architecture
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
-- **[.NET 8.0](https://dotnet.microsoft.com/)** - Latest LTS version with performance improvements
-- **[C# 12](https://docs.microsoft.com/en-us/dotnet/csharp/)** - Modern language features and syntax
-- **[ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/)** - High-performance web framework
+- **[.NET 8.0](https://dotnet.microsoft.com/)** — Web framework
+- **[ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/)** — Web API
+- **[C# 12](https://docs.microsoft.com/en-us/dotnet/csharp/)** — Language
 
 ### Architecture & Patterns
-- **[MediatR](https://github.com/jbogard/MediatR)** - CQRS and mediator pattern implementation
-- **[AutoMapper](https://github.com/AutoMapper/AutoMapper)** - Object-to-object mapping
-- **[FluentValidation](https://fluentvalidation.net/)** - Input validation with fluent syntax
+- **[MediatR 12](https://github.com/jbogard/MediatR)** — CQRS and mediator pattern
+- **[AutoMapper](https://github.com/AutoMapper/AutoMapper)** — Object mapping
+- **[FluentValidation](https://fluentvalidation.net/)** — Input validation
+- **[Entity Framework Core 8](https://docs.microsoft.com/en-us/ef/core/)** — ORM for PostgreSQL
 
 ### Databases
-- **[PostgreSQL 15](https://www.postgresql.org/)** - Primary OLTP database for write operations
-- **[MongoDB 8.0](https://www.mongodb.com/)** - Document store for read models and reporting
-- **[Redis 7.4](https://redis.io/)** - In-memory cache for performance optimization
+- **[PostgreSQL 13](https://www.postgresql.org/)** — Primary write database (port `5433`)
+- **[MongoDB 8.0](https://www.mongodb.com/)** — Document store / read models (port `27017`)
+- **[Redis 7.4](https://redis.io/)** — In-memory cache (port `6380`)
+
+### Observability & Documentation
+- **[Serilog](https://serilog.net/)** — Structured logging
+- **[Swagger/OpenAPI](https://swagger.io/)** — Interactive API docs (Swashbuckle 6.8)
+- **Health Checks** — `/health` endpoint for all dependencies
 
 ### Testing
-- **[xUnit](https://xunit.net/)** - Unit testing framework
-- **[NSubstitute](https://nsubstitute.github.io/)** - Mocking framework for test isolation
-- **[Bogus](https://github.com/bchavez/Bogus)** - Test data generation
+- **[xUnit](https://xunit.net/)** — Test framework
+- **[NSubstitute](https://nsubstitute.github.io/)** — Mocking
+- **[Bogus](https://github.com/bchavez/Bogus)** — Realistic test data generation
 
-### DevOps & Tools
-- **[Docker](https://www.docker.com/)** - Containerization for consistent environments
-- **[Serilog](https://serilog.net/)** - Structured logging for observability
-- **[Swagger/OpenAPI](https://swagger.io/)** - API documentation and testing
-
-## 🏗️ Architecture
+## Architecture
 
 ### Clean Architecture Layers
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Presentation Layer                   │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │   WebApi        │  │   Controllers   │  │  Middleware  │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+│                     Presentation Layer                      │
+│           WebApi / Controllers / Middleware                 │
 └─────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────┐
-│                       Application Layer                     │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │   Commands      │  │    Queries      │  │   Handlers   │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+│                     Application Layer                       │
+│           Commands / Queries / Handlers / Validators        │
 └─────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────┐
-│                         Domain Layer                        │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │   Entities      │  │  Business Rules │  │    Events    │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+│                       Domain Layer                          │
+│           Entities / Business Rules / Domain Events         │
 └─────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────┐
-│                     Infrastructure Layer                    │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │  Repositories   │  │   Data Access   │  │   External   │ │
-│  │                 │  │   (EF Core)     │  │   Services   │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+│                   Infrastructure Layer                      │
+│       Repositories / EF Core / MongoDB / Redis / IoC        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### CQRS Flow
+### Project Structure
 
 ```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Command   │───▶│  PostgreSQL │───▶│   Events    │
-│   (Write)   │    │ (Write DB)  │    │  (Domain)   │
-└─────────────┘    └─────────────┘    └─────────────┘
-                                              │
-                                              ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│    Query    │◀───│   MongoDB   │◀───│   Handlers  │
-│   (Read)    │    │  (Read DB)  │    │ (Sync Data) │
-└─────────────┘    └─────────────┘    └─────────────┘
+developer-evaluation/
+├── src/
+│   ├── DeveloperEvaluation.WebApi/       # ASP.NET Core API, controllers, Swagger
+│   ├── DeveloperEvaluation.Application/  # CQRS commands, queries, handlers
+│   ├── DeveloperEvaluation.Domain/       # Entities, value objects, domain events
+│   ├── DeveloperEvaluation.ORM/          # EF Core DbContext, migrations, seeding
+│   ├── DeveloperEvaluation.IoC/          # Dependency injection registration
+│   └── DeveloperEvaluation.Common/       # Shared utilities, JWT, health checks
+├── tests/
+│   ├── DeveloperEvaluation.Unit/         # Unit tests
+│   ├── DeveloperEvaluation.Integration/  # Integration tests
+│   └── DeveloperEvaluation.Functional/   # End-to-end API tests
+├── docker-compose.yml                    # Full stack (API + databases)
+├── docker-compose.infra.yml             # Infrastructure only (databases)
+├── DeveloperEvaluation.sln
+└── coverage-report.sh
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- **[.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)** or later
-- **[Docker Desktop](https://www.docker.com/products/docker-desktop)** for database containers
-- **[Git](https://git-scm.com/)** for version control
-- **IDE**: [Visual Studio 2022](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/)
+- **[.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)**
+- **[Docker Desktop](https://www.docker.com/products/docker-desktop)**
+- **[Git](https://git-scm.com/)**
 
 ### Quick Start
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/developer-evaluation.git
-   cd developer-evaluation/template/backend
+   git clone https://github.com/LucasGeek/developer-evaluation.git
+   cd developer-evaluation
    ```
 
 2. **Start the database containers**
    ```bash
-   docker-compose up -d
+   docker-compose -f docker-compose.infra.yml up -d
    ```
 
 3. **Restore dependencies**
@@ -189,273 +142,245 @@ The API manages a **Sales System** for a product catalog, handling:
    dotnet restore
    ```
 
-4. **Run database migrations**
+4. **Configure the application**
+
+   Create `src/DeveloperEvaluation.WebApi/appsettings.Development.json`:
+   ```json
+   {
+     "ConnectionStrings": {
+       "DefaultConnection": "Host=localhost;Port=5433;Database=developer_evaluation;Username=developer;Password=ev@luAt10n"
+     },
+     "MongoDB": {
+       "ConnectionString": "mongodb://developer:ev@luAt10n@localhost:27017",
+       "DatabaseName": "developer_evaluation"
+     },
+     "Redis": {
+       "ConnectionString": "localhost:6380,password=ev@luAt10n"
+     },
+     "Jwt": {
+       "SecretKey": "your-secret-key-min-32-chars",
+       "Issuer": "DeveloperEvaluation",
+       "Audience": "DeveloperEvaluation"
+     }
+   }
+   ```
+
+5. **Apply database migrations**
    ```bash
    dotnet ef database update -p src/DeveloperEvaluation.ORM -s src/DeveloperEvaluation.WebApi
    ```
 
-5. **Start the application**
+6. **Seed initial data** *(optional but recommended)*
+   ```bash
+   dotnet run --project src/DeveloperEvaluation.WebApi -- --seed
+   ```
+
+7. **Start the application**
    ```bash
    dotnet run --project src/DeveloperEvaluation.WebApi
    ```
 
-6. **Access the API**
-   - **Swagger UI**: http://localhost:5001/swagger
-   - **API Base**: http://localhost:5001/api
-   - **Health Check**: http://localhost:5001/health
+8. **Access the API**
+   - **Swagger UI**: http://localhost:5119/swagger
+   - **API Base**: http://localhost:5119/api
+   - **Health Check**: http://localhost:5119/health
+   - **HTTPS**: https://localhost:7181/swagger
 
-## 🗄️ Database Setup
+## Database Setup
 
-### Docker Compose Services
+### Docker Compose
 
-The application uses Docker Compose to orchestrate multiple databases:
+Two compose files are provided:
 
-```yaml
-services:
-  # PostgreSQL - Primary database for write operations
-  postgres:
-    image: postgres:15
-    ports: ["5432:5432"]
-    environment:
-      POSTGRES_DB: developer_evaluation
-      POSTGRES_USER: developer
-      POSTGRES_PASSWORD: ev@luAt10n
-
-  # MongoDB - Read models and reporting
-  mongodb:
-    image: mongo:8.0
-    ports: ["27017:27017"]
-
-  # Redis - Caching and session storage
-  redis:
-    image: redis:7.4.1-alpine
-    ports: ["6379:6379"]
-    command: redis-server --requirepass ev@luAt10n
-```
-
-### Database Commands
+| File | Purpose |
+|------|---------|
+| `docker-compose.infra.yml` | Infrastructure only (PostgreSQL, MongoDB, Redis) |
+| `docker-compose.yml` | Full stack including the WebAPI container |
 
 ```bash
-# Start all services
+# Start infrastructure only (recommended for local development)
+docker-compose -f docker-compose.infra.yml up -d
+
+# Start full stack with Docker
 docker-compose up -d
 
 # View service status
-docker-compose ps
+docker-compose -f docker-compose.infra.yml ps
 
 # Stop all services
-docker-compose down
-
-# Reset databases (WARNING: destroys data)
-docker-compose down -v && docker-compose up -d
+docker-compose -f docker-compose.infra.yml down
 ```
+
+### Port Mapping
+
+| Service    | Container Port | Host Port |
+|-----------|---------------|-----------|
+| PostgreSQL | 5432          | **5433**  |
+| MongoDB    | 27017         | **27017** |
+| Redis      | 6379          | **6380**  |
 
 ### Entity Framework Migrations
 
 ```bash
 # Create a new migration
-dotnet ef migrations add MigrationName -p src/DeveloperEvaluation.ORM -s src/DeveloperEvaluation.WebApi
+dotnet ef migrations add <MigrationName> -p src/DeveloperEvaluation.ORM -s src/DeveloperEvaluation.WebApi
 
 # Apply migrations
 dotnet ef database update -p src/DeveloperEvaluation.ORM -s src/DeveloperEvaluation.WebApi
 
-# Reset database
+# Drop database (WARNING: destroys all data)
 dotnet ef database drop -p src/DeveloperEvaluation.ORM -s src/DeveloperEvaluation.WebApi
 ```
 
-## 🌱 Seed Data
+## Seed Data
 
-The application includes a comprehensive **seed data system** that populates the database with realistic test data. **Seeding is now executed manually** as a separate command to keep the application startup clean and fast.
+The application ships with a `DataSeeder` that populates the database with realistic test data. Seeding runs as a **separate one-off command** to keep normal startup fast.
 
-### 🎯 What Gets Seeded
-
-#### 👥 **Users (5 total)**
-- **1 Admin**: `admin@developereval.com` / `Admin123!`
-- **1 Manager**: `manager@developereval.com` / `Manager123!`
-- **3 Customers**: `customer1@developereval.com`, `customer2@developereval.com`, `customer3@developereval.com` / `Customer123!`
-
-#### 🍺 **Products (17 total)**
-Authentic **product catalog** including:
-
-- **Beverages**: Budweiser, Stella Artois, Corona, Brahma, Antarctica Pilsen
-- **Premium Beverages**: Beck's, Leffe, Hoegaarden
-- **Snacks**: Doritos, Lay's, Pringles, Cheetos
-- **Soft Drinks**: Guaraná Antarctica, Pepsi, H2OH
-- **Energy Drinks**: Red Bull, Monster Energy
-
-Each product includes:
-- Realistic pricing ($2.99 - $15.99)
-- Product descriptions and categories
-- Random ratings (3.5-5.0 stars)
-- Review counts (100-2500 reviews)
-
-#### 🛒 **Shopping Carts (3 total)**
-- Random carts for customer users
-- 2-5 products per cart with varied quantities
-- Realistic shopping scenarios
-
-#### 💰 **Sales (15 total)**
-- Sales across 5 different branch locations in Brazil
-- 1-4 products per sale with business logic applied
-- Automatic discount calculations
-- 15% of sales randomly cancelled for testing
-- Varied quantities to test all discount rules
-
-### 🔧 Running Seed Data
-
-**Execute seeding manually** using the dedicated command:
+### Running Seed
 
 ```bash
-# Run seeding command (executes once and exits)
-dotnet run --project src/DeveloperEvaluation.WebApi --seed
+# Apply migrations + seed in one go (seeder calls MigrateAsync internally)
+dotnet run --project src/DeveloperEvaluation.WebApi -- --seed
 
-# OR from the WebApi directory
-cd src/DeveloperEvaluation.WebApi
-dotnet run --seed
-```
-
-**Note**: The `--seed` command will populate the database and then exit. This keeps the regular `dotnet run` command clean and fast.
-
-#### Manual Seed Operations
-
-```bash
-# 1. Apply database migrations first
-dotnet ef database update -p src/DeveloperEvaluation.ORM -s src/DeveloperEvaluation.WebApi
-
-# 2. Run seeding
-dotnet run --project src/DeveloperEvaluation.WebApi --seed
-
-# 3. Start the application normally
-dotnet run --project src/DeveloperEvaluation.WebApi
-
-# Force re-seed (drops and recreates data)
+# Force full re-seed (drop → migrate → seed)
 dotnet ef database drop -f -p src/DeveloperEvaluation.ORM -s src/DeveloperEvaluation.WebApi
-dotnet ef database update -p src/DeveloperEvaluation.ORM -s src/DeveloperEvaluation.WebApi
-dotnet run --project src/DeveloperEvaluation.WebApi --seed
+dotnet run --project src/DeveloperEvaluation.WebApi -- --seed
 ```
 
-#### Seed Data Features
+> **Note**: Seeding is idempotent — it checks whether data already exists before inserting. Running it twice is safe.
 
-- **Manual Execution**: Run only when needed, keeping application startup fast
-- **Idempotent**: Won't create duplicates if data already exists
-- **Realistic**: Uses realistic product names and data
-- **Business Logic**: Applies all discount rules and validation
-- **Comprehensive Logging**: Detailed logs for troubleshooting
-- **Error Handling**: Graceful failure without breaking the application
+### What Gets Seeded
 
-### 🎨 Using Seed Data
+#### Users (5 total)
 
-The seed data provides **immediate functionality** for testing:
+| Role     | Email                            | Password      |
+|----------|----------------------------------|---------------|
+| Admin    | `admin@developereval.com`        | `Admin123!`   |
+| Manager  | `manager@developereval.com`      | `Manager123!` |
+| Customer | `customer1@developereval.com`    | `Customer123!`|
+| Customer | `customer2@developereval.com`    | `Customer123!`|
+| Customer | `customer3@developereval.com`    | `Customer123!`|
+
+#### Products (17 total)
+
+| Category           | Products                                         |
+|--------------------|--------------------------------------------------|
+| Beverages          | Budweiser, Stella Artois, Corona, Brahma, Antarctica Pilsen |
+| Premium Beverages  | Beck's, Leffe, Hoegaarden                        |
+| Snacks             | Doritos, Lay's, Pringles, Cheetos                |
+| Soft Drinks        | Guaraná Antarctica, Pepsi, H2OH                  |
+| Energy Drinks      | Red Bull, Monster Energy                         |
+
+Each product has realistic pricing ($2.99–$15.99), random ratings (3.5–5.0 stars), and review counts (100–2,500).
+
+#### Shopping Carts & Sales
+- **3 carts** — one per customer, each with 2–5 random products
+- **15 sales** — spread across 5 Brazilian branch locations, with discounts applied and ~15% randomly cancelled
+
+## API Documentation
+
+### Swagger UI
+
+Interactive documentation is available at **http://localhost:5119/swagger** (Development mode only).
+
+Features: request/response examples, JWT authentication, schema browser, request duration display.
+
+### Authentication
 
 ```bash
-# Test the API immediately after startup
-curl http://localhost:5001/api/products
-
-# Login with seeded admin user
-curl -X POST http://localhost:5001/api/auth/login \
+# 1. Get a JWT token
+curl -X POST http://localhost:5119/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@developereval.com","password":"Admin123!"}'
 
-# View seeded sales
-curl http://localhost:5001/api/sales \
-  -H "Authorization: Bearer YOUR_TOKEN"
+# 2. Use the token
+curl http://localhost:5119/api/products \
+  -H "Authorization: Bearer <token>"
 ```
 
-## 📚 API Documentation
+In Swagger UI: click **Authorize**, then enter `Bearer <token>`.
 
-### 🌐 Swagger UI
+### Endpoints
 
-The API includes **comprehensive Swagger documentation** with interactive testing capabilities:
-
-- **URL**: http://localhost:5001/swagger
-- **Features**:
-  - Interactive API testing
-  - Request/response examples
-  - Schema documentation
-  - Authentication testing
-  - Error response examples
-
-### 🔑 Authentication
-
-All endpoints (except health checks) require **JWT authentication**:
-
-```bash
-# 1. Login to get token
-curl -X POST http://localhost:5001/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@developereval.com","password":"Admin123!"}'
-
-# 2. Use token in subsequent requests
-curl http://localhost:5001/api/products \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+#### Authentication
+```
+POST   /api/auth/login          # Authenticate and get JWT token
 ```
 
-### 📋 Core Endpoints
-
-#### 🔐 **Authentication**
+#### Users
 ```
-POST   /api/auth/login          # User authentication
-```
-
-#### 👥 **Users**
-```
-GET    /api/users               # List users (Admin/Manager only)
-POST   /api/users               # Create user (Admin only)
-GET    /api/users/{id}          # Get user details
+GET    /api/users               # List users (Admin/Manager)
+POST   /api/users               # Create user (Admin)
+GET    /api/users/{id}          # Get user by ID
 PUT    /api/users/{id}          # Update user
-DELETE /api/users/{id}          # Delete user (Admin only)
+DELETE /api/users/{id}          # Delete user (Admin)
 ```
 
-#### 📦 **Products**
+#### Products
 ```
-GET    /api/products            # List products with filters
-POST   /api/products            # Create product (Manager/Admin)
-GET    /api/products/{id}       # Get product details
-PUT    /api/products/{id}       # Update product (Manager/Admin)
-DELETE /api/products/{id}       # Delete product (Manager/Admin)
-GET    /api/products/categories # List categories
-GET    /api/products/category/{category} # Products by category
+GET    /api/products                      # List with pagination and filters
+POST   /api/products                      # Create product (Manager/Admin)
+GET    /api/products/{id}                 # Get product by ID
+PUT    /api/products/{id}                 # Update product (Manager/Admin)
+DELETE /api/products/{id}                 # Delete product (Manager/Admin)
+GET    /api/products/category/{category}  # Filter by category
 ```
 
-#### 🛒 **Shopping Carts**
+#### Shopping Carts
 ```
 GET    /api/carts               # List carts (Manager/Admin)
 POST   /api/carts               # Create cart
-GET    /api/carts/{id}          # Get cart details
+GET    /api/carts/{id}          # Get cart by ID
 PUT    /api/carts/{id}          # Update cart
 DELETE /api/carts/{id}          # Delete cart
 ```
 
-#### 💰 **Sales**
+#### Branches
+```
+GET    /api/branches            # List branches
+POST   /api/branches            # Create branch (Admin)
+GET    /api/branches/{id}       # Get branch by ID
+PUT    /api/branches/{id}       # Update branch (Admin)
+DELETE /api/branches/{id}       # Delete branch (Admin)
+```
+
+#### Sales
 ```
 GET    /api/sales               # List sales
 POST   /api/sales               # Create sale
-GET    /api/sales/{id}          # Get sale details
+GET    /api/sales/{id}          # Get sale by ID
 PUT    /api/sales/{id}          # Update sale
 DELETE /api/sales/{id}          # Cancel sale
 ```
 
-### 📊 Query Parameters
+#### Health
+```
+GET    /health                  # Health check (all dependencies)
+```
+
+### Query Parameters
 
 All list endpoints support:
 
 - **Pagination**: `?page=1&size=20`
 - **Sorting**: `?sort=price desc,title asc`
-- **Filtering**: `?category=beverages&minPrice=5&maxPrice=20`
+- **Filtering**: e.g. `?category=beverages&minPrice=5&maxPrice=20`
 
-### 📝 Request/Response Examples
+### Request/Response Examples
 
 #### Create Sale
 ```json
 POST /api/sales
 {
   "saleNumber": "SALE-2024-001",
-  "customerId": "guid",
+  "saleDate": "2024-01-15T10:30:00Z",
+  "customerId": "<guid>",
   "customerDescription": "John Doe",
-  "branchId": "guid",
+  "branchId": "<guid>",
   "branchDescription": "São Paulo - Centro",
   "items": [
     {
-      "productId": "guid",
+      "productId": "<guid>",
       "productDescription": "Budweiser Lager Beer",
       "quantity": 12,
       "unitPrice": 8.99
@@ -464,284 +389,117 @@ POST /api/sales
 }
 ```
 
-#### Response with Discounts Applied
+#### Response (201 Created)
 ```json
 {
   "success": true,
   "data": {
-    "id": "guid",
+    "id": "<guid>",
     "saleNumber": "SALE-2024-001",
     "date": "2024-01-15T10:30:00Z",
-    "customerId": "guid",
     "customerDescription": "John Doe",
-    "branchId": "guid",
     "branchDescription": "São Paulo - Centro",
-    "totalAmount": 86.31,
+    "totalAmount": 86.30,
     "cancelled": false,
     "items": [
       {
-        "productId": "guid",
         "productDescription": "Budweiser Lager Beer",
         "quantity": 12,
         "unitPrice": 8.99,
         "discount": 21.58,
-        "total": 86.31
+        "total": 86.30
       }
     ]
   }
 }
 ```
 
-## 📋 Business Rules
+## Business Rules
 
-### 💸 Discount Calculation
+### Discount Calculation
 
-The system implements **automatic discount calculation** based on quantity tiers:
+Discounts are applied automatically per item when the sale is created:
 
-| Quantity Range | Discount | Example |
-|---------------|----------|---------|
-| 1-3 items | **0%** | 3 × $10.00 = **$30.00** |
-| 4-9 items | **10%** | 6 × $10.00 = **$54.00** (was $60.00) |
-| 10-20 items | **20%** | 15 × $10.00 = **$120.00** (was $150.00) |
-| 21+ items | **❌ Not Allowed** | Maximum 20 items per product |
-
-### ⚠️ Validation Rules
-
-#### Sales Validation
-- **Maximum 20 items** per product per sale
-- **No discounts** for quantities below 4 items
-- **Automatic discount application** for eligible quantities
-- **Stock validation** before sale completion
-
-#### User Validation
-- **Strong password policy**: 8+ chars, uppercase, lowercase, number, special char
-- **Unique email addresses** across all users
-- **Valid phone number format**: Brazilian format
-- **Role-based access control** enforcement
-
-#### Product Validation
-- **Positive pricing** validation
-- **Required fields**: title, description, category
-- **Price range**: $0.01 - $999.99
-- **Category validation** against predefined list
-
-### 🎯 Business Logic Examples
+| Quantity     | Discount         |
+|-------------|-----------------|
+| 1–3 items   | 0%              |
+| 4–9 items   | **10%**         |
+| 10–20 items | **20%**         |
+| 21+ items   | Not allowed     |
 
 ```csharp
-// Automatic discount calculation
-var saleItem = new SaleItem(saleId, productId, "Budweiser", 12, 8.99m);
-saleItem.ApplyDiscount(); // Automatically applies 20% discount
-// Result: Total = $86.31 (was $107.88)
-
-// Quantity validation
-var sale = new Sale();
-var item1 = new SaleItem(saleId, productId, "Corona", 15, 7.99m);
-var item2 = new SaleItem(saleId, productId, "Corona", 10, 7.99m); // Would exceed 20 total
-sale.AddItem(item1); // ✅ Success
-sale.AddItem(item2); // ❌ Throws InvalidOperationException
+// Example: 12 units of Budweiser at $8.99
+var item = new SaleItem(saleId, productId, "Budweiser", 12, 8.99m);
+item.ApplyDiscount();
+// Discount: 20% → $21.58
+// Total:    $86.30
 ```
 
-## 🧪 Testing
+### Validation Rules
 
-### Test Structure
+- **Maximum 20 items** per product per sale line
+- **Positive quantities** required (minimum 1)
+- **Unique email addresses** per user
+- **Strong passwords**: 8+ chars, uppercase, lowercase, digit, special character
+
+## Testing
+
+### Structure
 
 ```
 tests/
-├── DeveloperEvaluation.Unit/        # Unit tests
-├── DeveloperEvaluation.Integration/ # Integration tests
-└── DeveloperEvaluation.Functional/  # API tests
+├── DeveloperEvaluation.Unit/        # Domain logic, validators, CQRS handlers
+├── DeveloperEvaluation.Integration/ # Database and repository tests
+└── DeveloperEvaluation.Functional/  # End-to-end API tests
 ```
 
 ### Running Tests
 
 ```bash
 # Run all tests
-dotnet test
+dotnet test DeveloperEvaluation.sln
 
-# Run specific test project
+# Run a specific project
 dotnet test tests/DeveloperEvaluation.Unit/
 
-# Run tests with coverage
-dotnet test --collect:"XPlat Code Coverage"
-
-# Run tests with detailed output
+# Run with verbose output
 dotnet test --verbosity normal
+
+# Run with code coverage (requires coverlet)
+dotnet test --collect:"XPlat Code Coverage"
 ```
 
-### Test Coverage
+### Coverage Report
 
-The project maintains **high test coverage** across:
-
-- **Domain Logic**: 95%+ coverage of business rules
-- **Application Services**: 90%+ coverage of CQRS handlers
-- **API Controllers**: 85%+ coverage of endpoints
-- **Integration Tests**: Complete database and API workflows
-
-### Test Categories
-
-#### Unit Tests (153 tests)
-- **Domain Entity Validation**: Business rules and invariants
-- **Discount Calculation**: All quantity-based scenarios
-- **CQRS Handlers**: Command and query processing
-- **Validation Logic**: Input validation and constraints
-
-#### Integration Tests
-- **Database Operations**: Entity Framework and MongoDB
-- **CQRS Flow**: Command → Event → Read Model synchronization
-- **Authentication**: JWT token generation and validation
-- **Caching**: Redis integration and cache invalidation
-
-#### Functional Tests
-- **End-to-End API**: Complete request/response cycles
-- **Authentication Flow**: Login and protected endpoints
-- **Business Scenarios**: Real-world usage patterns
-- **Error Handling**: Comprehensive error response testing
-
-## ⚡ Performance
-
-### Optimization Strategies
-
-#### Database Performance
-- **Indexed queries** on frequently searched fields
-- **Efficient joins** with proper foreign key relationships
-- **Connection pooling** for optimal resource usage
-- **Query optimization** with Entity Framework best practices
-
-#### Caching Strategy
-- **Redis caching** for frequently accessed products
-- **In-memory caching** for configuration and lookup data
-- **Cache invalidation** on data updates
-- **Cache-aside pattern** implementation
-
-#### Async Operations
-- **Async/await** throughout the application stack
-- **Non-blocking I/O** for database and external service calls
-- **Parallel processing** where applicable
-- **Efficient resource utilization**
-
-### Performance Metrics
+A convenience script generates an HTML coverage report:
 
 ```bash
-# Typical response times (localhost)
-GET  /api/products          # ~50ms  (with Redis cache)
-POST /api/sales             # ~150ms (includes validation + CQRS)
-GET  /api/sales/{id}        # ~30ms  (read from MongoDB)
-POST /api/auth/login        # ~200ms (includes password hashing)
+chmod +x coverage-report.sh
+./coverage-report.sh
+# Opens: TestResults/CoverageReport/index.html
 ```
 
-### Monitoring
+## Security
 
-- **Structured logging** with Serilog
-- **Health checks** for all dependencies
-- **Request/response logging** for audit trails
-- **Performance counters** for key operations
-
-## 🔒 Security
-
-### Authentication & Authorization
-
-- **JWT Bearer tokens** with configurable expiration
-- **Role-based access control** (Admin, Manager, Customer)
-- **Password hashing** using secure algorithms
-- **Token validation** on all protected endpoints
-
-### Security Headers
-
-```csharp
-// Applied security headers
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-app.Use(/* Security headers middleware */);
-```
-
-### Input Validation
-
-- **FluentValidation** for comprehensive input validation
-- **SQL injection protection** via Entity Framework parameterization
-- **XSS protection** through input sanitization
-- **Request size limits** to prevent DoS attacks
-
-### Environment Configuration
-
-```json
-// Secure configuration management
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "ENVIRONMENT_VARIABLE_REQUIRED"
-  },
-  "Jwt": {
-    "SecretKey": "REPLACE_WITH_SECURE_KEY_FROM_ENVIRONMENT_VARIABLES"
-  },
-  "AllowedHosts": "localhost;*.localhost"
-}
-```
-
-## 🤝 Contributing
-
-### Development Workflow
-
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Make your changes** following the coding standards
-4. **Write/update tests** for new functionality
-5. **Ensure all tests pass**: `dotnet test`
-6. **Commit your changes**: `git commit -m 'feat: add amazing feature'`
-7. **Push to the branch**: `git push origin feature/amazing-feature`
-8. **Open a Pull Request**
-
-### Coding Standards
-
-- **Clean Code** principles
-- **SOLID** design principles
-- **Domain-Driven Design** patterns
-- **Comprehensive unit testing**
-- **XML documentation** for public APIs
-- **Consistent naming conventions**
-
-### Commit Message Format
-
-```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
-```
-
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
-
-### Code Review Checklist
-
-- [ ] **Business logic** is properly tested
-- [ ] **Security** considerations addressed
-- [ ] **Performance** impact evaluated
-- [ ] **Documentation** updated
-- [ ] **SOLID principles** followed
-- [ ] **Error handling** implemented
-- [ ] **Logging** added where appropriate
+- **JWT Bearer tokens** — configurable expiration via `appsettings`
+- **Role-based authorization** — Admin, Manager, Customer roles enforced per endpoint
+- **Password hashing** — secure one-way hashing (no plaintext storage)
+- **FluentValidation** — all inputs validated before handler execution
+- **EF Core parameterization** — SQL injection protection by default
+- **`appsettings.Development.json` excluded from git** — never commit credentials
 
 ---
 
-## 📞 Support
+## Contact
 
-For questions, issues, or contributions:
-
-- **GitHub Issues**: [Create an issue](https://github.com/your-username/developer-evaluation/issues)
-- **Documentation**: Check the `/docs` folder for detailed guides
-- **Code Review**: All contributions welcome via Pull Requests
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **Author**: Lucas Albuquerque
+- **Email**: lucas.albuquerque.gk@gmail.com
+- **Repository**: https://github.com/LucasGeek/developer-evaluation
+- **Issues**: https://github.com/LucasGeek/developer-evaluation/issues
 
 ---
 
 <div align="center">
-
-**Built with ❤️ for Developer Evaluation**
 
 *Demonstrating Clean Architecture, CQRS, and DDD principles in .NET 8*
 
