@@ -6,10 +6,10 @@ dotnet tool install --global dotnet-reportgenerator-globaltool
 
 echo "Clean and build solution"
 dotnet restore
-dotnet build  Ambev.DeveloperEvaluation.sln --configuration Release --no-restore
+dotnet build  DeveloperEvaluation.sln --configuration Release --no-restore
 
 echo "Run tests with coverage"
-dotnet test  Ambev.DeveloperEvaluation.sln --no-restore --verbosity normal \
+dotnet test  DeveloperEvaluation.sln --no-restore --verbosity normal \
 /p:CollectCoverage=true \
 /p:CoverletOutputFormat=cobertura \
 /p:CoverletOutput=./TestResults/coverage.cobertura.xml \

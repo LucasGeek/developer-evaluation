@@ -746,3 +746,5 @@ Backup of *.doc*
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,csharp,microsoftoffice,azurefunctions,azurite,visualstudiocode,intellij,intellij+all,intellij+iml,linux,macos
+# OMC internal state
+.omc/
